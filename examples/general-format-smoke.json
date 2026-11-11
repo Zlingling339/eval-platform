@@ -1,0 +1,9 @@
+{
+  "dataset":"general_format_smoke_v1", "version":"1.0", "note":"结构规则链路冒烟，只用 format_rule；合法结构不代表内容事实正确。",
+  "cases":[
+    {"id":"format-01","input":{"question":"输出 JSON 对象，包含 status 与 count，status 为 ok 或 error，count 为 2。"},"gold":{"answer":"{\"status\":\"ok\",\"count\":2}"},"expect":{"json":true,"required":["status","count"],"enum":{"status":["ok","error"]}},"mock_reply":"{\"status\":\"ok\",\"count\":2}","smoke_expected_verdict":"pass"},
+    {"id":"format-02","input":{"question":"输出 JSON 对象，包含 status 与 count，status 为 ok 或 error，count 为 2。"},"gold":{"answer":"{\"status\":\"ok\",\"count\":2}"},"expect":{"json":true,"required":["status","count"],"enum":{"status":["ok","error"]}},"mock_reply":"{\"status\":\"ok\"}","smoke_expected_verdict":"fail"},
+    {"id":"format-03","input":{"question":"输出 JSON 对象，包含 status，status 必须为 ok 或 error。"},"gold":{"answer":"{\"status\":\"ok\"}"},"expect":{"json":true,"required":["status"],"enum":{"status":["ok","error"]}},"mock_reply":"{\"status\":\"unknown\"}","smoke_expected_verdict":"fail"},
+    {"id":"format-04","input":{"question":"输出 JSON 对象，包含 message 字段。"},"gold":{"answer":"{\"message\":\"你好\"}"},"expect":{"json":true,"required":["message"]},"mock_reply":"这不是 JSON","smoke_expected_verdict":"fail"}
+  ]
+}

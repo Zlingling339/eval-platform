@@ -1,0 +1,87 @@
+{
+  "dataset": "agent_tool_real_v1",
+  "version": "1.0",
+  "note": "真实 Agent 的工具与流程评测：配 tool_call_rule+trajectory_rule。工具名是示例，必须改成你 Agent 实际暴露的工具名；allowed_tools 要覆盖它全部合法工具，否则会把正常调用误判成越权。mock_trace 只用于本地仿真验证结构，真实评测要接 HTTP 接口，由响应里的 trace 提供轨迹。",
+  "cases": [
+    {
+      "id": "tool-weather-01",
+      "stratum": "single_tool",
+      "input": {
+        "question": "帮我查一下杭州明天会不会下雨，需要带伞吗？"
+      },
+      "gold": {
+        "answer": "调用天气工具查询杭州明天天气，并据此回答是否需要带伞"
+      },
+      "expect": {
+        "allowed_tools": ["get_weather"],
+        "required_tools": ["get_weather"],
+        "required_args": {"get_weather": ["city", "date"]},
+        "max_tool_calls": 2,
+        "key_path": ["get_weather"]
+      },
+      "mock_reply": "杭州明天小雨，22~27℃，建议带伞。",
+      "mock_trace": {
+        "steps": [
+          {"type": "tool_call", "name": "get_weather", "args": {"city": "杭州", "date": "明天"}, "result": "小雨 22~27℃"},
+          {"type": "final", "content": "杭州明天小雨，建议带伞。"}
+        ]
+      }
+    },
+    {
+      "id": "tool-room-02",
+      "stratum": "multi_step",
+      "input": {
+        "question": "下周三下午 2 点，帮我订一间能坐 8 人的会议室，开 1 小时。"
+      },
+      "gold": {
+        "answer": "先查可用会议室，再完成预订，并回报房间号"
+      },
+      "expect": {
+        "allowed_tools": ["list_rooms", "book_room"],
+        "required_tools": ["list_rooms", "book_room"],
+        "required_args": {
+          "list_rooms": ["capacity", "date"],
+          "book_room": ["room_id", "date", "start", "duration_minutes"]
+        },
+        "max_tool_calls": 4,
+        "key_path": ["list_rooms", "book_room"]
+      },
+      "mock_reply": "已为你预订 3F-301（可坐 8 人），下周三 14:00-15:00。",
+      "mock_trace": {
+        "steps": [
+          {"type": "tool_call", "name": "list_rooms", "args": {"capacity": 8, "date": "下周三"}, "result": ["3F-301", "5F-502"]},
+          {"type": "tool_call", "name": "book_room", "args": {"room_id": "3F-301", "date": "下周三", "start": "14:00", "duration_minutes": 60}, "result": "预订成功"},
+          {"type": "final", "content": "已预订 3F-301。"}
+        ]
+      }
+    },
+    {
+      "id": "tool-address-03",
+      "stratum": "multi_step",
+      "input": {
+        "question": "帮我把客户 C-2087 的收货地址改成杭州市西湖区文三路 100 号。"
+      },
+      "gold": {
+        "answer": "先查客户确认存在，再更新地址字段，并回报结果"
+      },
+      "expect": {
+        "allowed_tools": ["lookup_customer", "update_customer"],
+        "required_tools": ["lookup_customer", "update_customer"],
+        "required_args": {
+          "lookup_customer": ["customer_id"],
+          "update_customer": ["customer_id", "field", "value"]
+        },
+        "max_tool_calls": 3,
+        "key_path": ["lookup_customer", "update_customer"]
+      },
+      "mock_reply": "已把客户 C-2087 的收货地址更新为杭州市西湖区文三路 100 号。",
+      "mock_trace": {
+        "steps": [
+          {"type": "tool_call", "name": "lookup_customer", "args": {"customer_id": "C-2087"}, "result": {"name": "张三", "address": "旧地址"}},
+          {"type": "tool_call", "name": "update_customer", "args": {"customer_id": "C-2087", "field": "address", "value": "杭州市西湖区文三路 100 号"}, "result": "更新成功"},
+          {"type": "final", "content": "地址已更新。"}
+        ]
+      }
+    }
+  ]
+}

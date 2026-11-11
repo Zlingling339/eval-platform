@@ -1,0 +1,9 @@
+{
+  "dataset":"general_qa_summary_smoke_v1", "version":"1.0", "note":"问答与摘要的关键词链路冒烟，只用 keyword_rule；关键词命中不代表语义正确或摘要完整。",
+  "cases":[
+    {"id":"qa-01","input":{"question":"已知：甲项目周一完成设计评审，周三开始开发。问题：开发从周几开始？"},"gold":{"answer":"周三"},"expect":{"must_mention":["周三|星期三"]},"mock_reply":"周三开始。","smoke_expected_verdict":"pass"},
+    {"id":"qa-02","input":{"question":"计算 12 加 8，直接回答数字。"},"gold":{"answer":"20"},"expect":{"must_mention":["20|二十"]},"mock_reply":"21","smoke_expected_verdict":"fail"},
+    {"id":"summary-01","input":{"question":"用一句话概括：团队周一完成方案，周三启动开发。请提及开发启动时间。"},"gold":{"answer":"团队周一完成方案，周三启动开发。"},"expect":{"must_mention":["周三|星期三"]},"mock_reply":"团队周一完成方案，周三启动开发。","smoke_expected_verdict":"pass"},
+    {"id":"summary-02","input":{"question":"概括：本次会议决定下周一发布测试版，不涉及正式上线。不要使用‘正式上线’。"},"gold":{"answer":"会议决定下周一发布测试版。"},"expect":{"must_mention":["测试版"],"forbidden":["正式上线"]},"mock_reply":"下周一发布测试版并正式上线。","smoke_expected_verdict":"fail"}
+  ]
+}

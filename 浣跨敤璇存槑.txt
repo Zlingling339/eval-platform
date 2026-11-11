@@ -1,0 +1,253 @@
+LLM 评测平台 · 使用说明
+============================================================
+
+一、启动
+------------------------------------------------------------
+1) 安装依赖（建议虚拟环境）：
+     pip install -r requirements.txt
+
+2) 启动服务：
+     python server.py
+   浏览器打开 http://127.0.0.1:8765
+
+   如需指定端口：python server.py --port 9000
+   （或 uvicorn server:app --host 127.0.0.1 --port 8765）
+
+服务默认只监听本机，没有登录与权限控制，不要直接暴露到公网。
+
+3) 空库里没有预装产品。独立模型评测可直接上传数据集、选择评分器，
+   无需加载示例或创建产品。若要体验产品环节，可选择「加载通用示例」，
+   或执行：
+     curl -X POST http://127.0.0.1:8765/api/examples/general
+
+二、三条评测路径
+------------------------------------------------------------
+① 模型评测：给模型一组输入，按选定评分器判断回答是否符合预期。
+② Agent 评测：除回答外，还核对工具调用与执行轨迹；没有采集到轨迹时
+   判「待复核」，不判失败，也不冒充通过。可选「独立 Agent 评测」直接
+   打被测 Agent 的 HTTP 接口，不需要创建产品；轨迹从响应顶层的 trace 取。
+③ 产品界面评测：输入网址，按步骤点击 / 填写 / 校验文本与控件状态，
+   记录截图与每步耗时。
+
+三者结果分开出报告，不合成一个总分。
+
+三、评分器清单（/api/graders 返回的就是这 14 个）
+------------------------------------------------------------
+确定性规则（同一输入结果可复现）：
+  keyword_rule      关键词合规     必需词是否出现、禁用词是否避免
+  format_rule       格式结构       JSON / 字段 / 结构是否合法
+  citation_rule     引用溯源       引用是否来自给定材料
+  label_match       分类判定       二分类混淆统计，产出 accuracy/precision/recall/F1
+  outcome_rule      终态校验       任务结束后的真实状态是否正确
+  retrieval_rule    检索层         Hit@k / Recall@k / Precision@k / MRR
+  efficiency_rule   效率成本       耗时、步数、token 是否在预算内
+  tool_call_rule    工具调用（规则） 必需工具、必需参数、调用次数、越权调用
+  trajectory_rule   轨迹对齐（规则） 关键路径顺序、步骤数上限
+
+需要评委模型的：
+  llm_rubric        判定表评分     按维度量表打分（需配置「评委模型」角色）
+  rag_judge         RAG 生成层     回答是否有据、是否覆盖要点
+  tool_call_judge   工具调用质量   工具选择是否合理
+  trajectory_judge  轨迹过程质量   整条轨迹是否达成目标
+  pair_compare      成对比较       A/B 两个回答哪个更好
+
+需要评委模型的评分器，若「模型角色」里没配评委，会判「待复核」并说明
+原因，不会用固定分值顶替。
+
+四、分类指标（accuracy / precision / recall / F1）
+------------------------------------------------------------
+评测集里给每条用例标一个二分类标签：
+
+  {
+    "id": "cls-tp-01",
+    "input": { "text": "..." },
+    "gold": { "label": "positive" },        // 人工标注
+    "mock_reply": "{\"label\":\"positive\"}" // 仿真模式下被测方的输出
+  }
+
+选择评分器 label_match 运行，平台会把每条结果归入 tp / fp / fn / tn，
+再算：
+  accuracy  = (tp+tn) / (tp+fp+fn+tn)
+  precision = tp / (tp+fp)
+  recall    = tp / (tp+fn)
+  f1        = 2*tp / (2*tp+fp+fn)
+
+预测标签的取法（按顺序尝试）：
+  1) 用例里 expect.predict_from 指定的字段路径
+  2) 输出 JSON 顶层的 label 字段
+  3) 用例里 expect.positive_keywords / negative_keywords 的关键词命中
+  4) 纯文本输出：整段或某一行就是一个标签词（positive / negative / true /
+     false / 是 / 否），或「答案：positive」「标签：negative」这种带前缀的一行
+
+第 4 条是给真实模型准备的：真实 API 经常只回一个 "negative"，
+以前会被判「找不到预测标签」而进待复核；现在能正常判分。
+
+标注缺失、或预测标签认不出来时，该条判「待复核」，不会硬猜。
+
+出厂示例 examples/smoke-classification.json 共 10 条，标注为
+tp=4 fp=1 fn=2 tn=3，跑完应得到：
+  accuracy 0.7  precision 0.8  recall 0.6667  f1 0.7273
+可以用来核对算法链路是否接通。这组数字是手算结果，不是模型能力。
+
+注意：分类指标与 rubric 质量分是两个口径。前者回答「判断对没对」，
+后者回答「回答好不好」。报告里分开显示，不要相加。
+
+五、冒烟示例数据与评分器配对
+------------------------------------------------------------
+examples/general-label-smoke.json         4 条，仅 label_match
+   情绪二分类；仿真预期 2 通过、1 不通过、1 待复核。
+examples/general-qa-summary-smoke.json    4 条，仅 keyword_rule
+   事实问答、算术和摘要；仿真预期 2 通过、2 不通过。
+examples/general-format-smoke.json        4 条，仅 format_rule
+   JSON、必填字段和枚举；仿真预期 1 通过、3 不通过。
+examples/smoke-model.json                2 条，仅 keyword_rule
+   仿真预期 1 通过、1 不通过。
+examples/smoke-agent.json                3 条，tool_call_rule+trajectory_rule
+   仿真预期 1 通过、1 不通过、1 待复核。
+
+真实 Agent 用的三份（工具名需换成你自己的）：
+examples/agent-tool-real.json            3 条，tool_call_rule+trajectory_rule
+   天气查询 / 会议室预订 / 改客户地址；查该调的工具、参数与关键步骤。
+examples/agent-guard-real.json           2 条，tool_call_rule
+   闲聊不该调工具、删号必须先审批；查边界与越权。
+examples/agent-outcome-real.json         3 条，outcome_rule
+   退款申请 / 创建工单 / 关闭工单；查结构化终态，不听自然语言。
+接口返回格式见 examples/agent接口契约.txt（output / trace / state）。
+examples/smoke-classification.json       10 条，仅 label_match
+   仿真预期 tp=4 fp=1 fn=2 tn=3，F1=0.7273。
+
+步骤：进入「评测集」上传 → 查看输入、参考答案和规则并点「已复核」
+→ 进入模型评测（或 Agent 评测）→ 选数据集及对应评分器 → 勾选
+「本地仿真」→ 运行。独立模型评测无需创建或关联产品；需要输入数据集
+和评分器。产品链路则须选择实际产品与环节。
+
+评分器只按自身契约读取字段：label_match 读取 gold.label；keyword_rule
+读取 expect.must_mention / forbidden，多个必需词中任意一个命中即通过，
+coverage 才反映命中比例，词项内部用 | 表示同义替代；format_rule 读取
+expect.json / required / enum 等。格式检查允许从围栏或文本提取 JSON，
+不保证纯 JSON 输出，也不检查事实及字段类型。关键词命中不保证语义正确、
+答案完整或摘要忠实。不要将一份数据随意配给不匹配的评分器；规则通过
+不是全面质量保证，正式评估仍需扩充样本、人工复核并按需语义评分。
+
+以上数据均为小规模链路冒烟，不是代表性能力基准。mock 使用预置回答，
+不调用真实外部模型；有意安排的失败和待复核用于验证链路，不是模型表现。
+未复核或复核未通过的数据集默认阻止运行；仅试点时 API 可传 force=true
+跳过复核（也可能绕过上游依赖门槛），不应视为完成复核或用于正式结论。
+
+五补充、真实模型配置与版本对比
+------------------------------------------------------------
+被测模型有两个可写入口，评测页会把两边合并显示，并在「已保存的被测模型」
+下拉里列出来：
+
+  a) 「设置」页：模型名 + 模型 API 地址 + 模型 API Key（顶层配置）
+  b) 「模型与API配置」页的 target 角色卡：vendor / model / base_url
+     保存在服务端 config/models.yaml，Key 存在浏览器本地
+
+优先级：设置页写了就用设置页，没写的项回退到 target 角色卡。
+选了某张角色卡，本次运行就用该卡的 base_url 与该角色的本地 Key；
+没选则用设置页。两个入口都空时，评测页才会显示「未配置」。
+配好之后「开始评测 → 模型评测」会自动带出模型名和地址，不需要重填。
+
+模型 API 地址只填基础地址（例如 https://api.openai.com/v1，不含密钥或查询参数），
+程序会在后面追加 /chat/completions，不要重复填写完整接口路径。
+使用 llm_rubric 等评委评分器时还需配置可用的评委角色及其密钥，
+并留意被测与评委的同源检查。不同供应商的兼容性、权限和费用以其文档为准。
+
+每次运行会产生运行 ID 与评测版本 ID，版本关联该次运行和配置快照；
+通过运行详情或版本对比查看结果，不要把版本号当作数据集版本本身。
+对比前应确保数据集内容及用例、评分器和评分口径、执行范围与重复次数等
+一致；产品场景还要核对产品、环节及其他影响结果的配置。平台会校验部分
+不兼容条件，能对比并不等于可归因：模型、提示词或其他变量同时改变时，
+不能将差异简单归因于单一因素。
+
+五补充一、Agent 端接真实接口
+------------------------------------------------------------
+1) 「开始评测 → Agent 评测」→ 评测方式选「独立 Agent 评测（直接打接口）」
+2) 填接口地址、方法、超时；响应字段路径：评工具填 output，评终态填 state
+3) 请求体模板示例：{"question": "{question}"}
+4) 选数据集与评分器（工具用 tool_call_rule+trajectory_rule，终态用 outcome_rule）
+5) 先勾「本地仿真」确认数据集结构，再取消勾选打真实接口
+
+Agent 响应必须包含顶层 trace：
+  {"output":"...","trace":{"steps":[{"type":"tool_call","name":"get_weather",
+    "args":{"city":"杭州","date":"明天"},"result":"小雨"}]}}
+没有 trace 会判「待复核」，而不是失败——这是故意的，因为没证据不能定罪。
+allowed_tools 是白名单，要填全你 Agent 的所有工具，否则正常调用会被误判越权。
+详细字段见 examples/agent接口契约.txt。
+
+五补充二、两版示例 prompt 与对比测试
+------------------------------------------------------------
+examples/prompts/ 里有两版可直接用的 prompt：
+  prompt-v1-简洁直答.txt     只输出最终答案，压住解释与前缀
+  prompt-v2-结构化审慎.txt   先内部核对，再按固定格式输出，含「信息不足」
+  prompt对比测试说明.txt     两版差别、跑法、怎么读结果、边界
+
+导入平台（平台已启动时）：
+  python tools/seed_prompts.py
+会在 product=standalone_model / stage=model 下建两版，
+模型评测页的「Prompt 版本」下拉和 Prompt 管理页都能选到。
+也可以手动在「准备评测 → Prompt 管理」新建，产品选「独立模型评测（不关联产品）」。
+
+对比步骤：同一数据集、同一评分器、同一重复次数，只改 Prompt 版本，
+两次各填一个版本标签（如 prompt-v1 / prompt-v2），再到
+「查看结果 → 版本记录 → 对比两个版本」看指标差与逐题翻转。
+数据集内容哈希、评分器、重复次数、限条数、scope 任一不同，后端会拒绝比较。
+
+六、产品界面评测
+------------------------------------------------------------
+需要浏览器。两种方式任选：
+  a) python -m playwright install chromium
+     （Linux 可能还需 python -m playwright install-deps chromium）
+  b) 由管理员安装系统 Chromium，启动服务前设置：
+     PRODUCT_UI_CHROMIUM_EXECUTABLE=/usr/bin/chromium
+
+页面里输入网址与步骤；也提供 HTTP 接口：
+  POST /api/product-ui/run
+  {"url":"http://...","steps":[{"action":"screenshot"}]}
+返回 ok、steps、error、elapsed_ms、run_id，截图步骤含 png_base64。
+
+支持的动作：fill / click / check_text / check_button / screenshot。
+检查失败即停止执行并标明未执行步骤。check_text 只校验当前文本，
+不等待异步变化。
+
+执行元数据默认存 data/product_ui_runs（仅当前用户可读，权限过宽时
+自动收紧为 0700），不存输入、页面文本、URL 或截图；截图只在响应里。
+可用 PRODUCT_UI_RECORD_DIR 指定目录。
+
+安全边界：执行器没有鉴权、没有 SSRF 防护，被测页面能访问内网资源。
+只能测你有权测试的站点，只在可信网络内使用。复杂登录、验证码、
+文件上传、流式输出、多轮对话、视觉差异比对不在本期范围。
+
+七、密钥怎么处理
+------------------------------------------------------------
+API Key 保存在浏览器 localStorage，运行时随本机请求临时发送。
+服务端不写入数据库、报告、日志或密钥文件。运行记录里的接口地址只
+保留主机名，请求体里形似凭据的字符串会登记为敏感值并从输出中打码。
+
+localStorage 不是安全保险箱。共用电脑请用「设置 → 清空本地数据」。
+
+八、自测
+------------------------------------------------------------
+接口与功能自测（会先备份 data/ 与 reports/，跑完自动还原）：
+
+  python tools/selftest_api.py
+
+校验内容：全部 /api 路由不出现 5xx；模型 / Agent / 界面三条路径各跑
+一次；分类指标数值；报告与台账不含旧业务词；假密钥不落库不进报告。
+结果输出在终端并写入 selftest-report.json。
+
+单元测试：
+  python -m unittest discover -s tests -v
+
+九、两个命令行入口的边界
+------------------------------------------------------------
+run.py（CLI）与 app.py（Streamlit）仍依赖 src/products.py 里的 Python
+适配器注册表。本包该注册表为空，要用这两个入口跑自定义产品，需先实现
+并登记对应的 prompt / mock 适配器。Web 界面不需要写代码，通过配置即可。
+
+十、数据与备份
+------------------------------------------------------------
+数据在 data/（SQLite 与上传文件），报告在 reports/。升级或迁移前先
+整目录备份。交付包不包含你的数据库、上传文件与历史报告。
+
+模型与产品接口的调用会把相关数据发给你配置的上游服务，请只连接可信服务。

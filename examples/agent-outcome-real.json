@@ -1,0 +1,49 @@
+{
+  "dataset": "agent_outcome_real_v1",
+  "version": "1.0",
+  "note": "真实 Agent 的终态评测：只用 outcome_rule。它不看回复说得多漂亮，只读结构化终态——「回复说成功了但状态没变」是 Agent 最典型的假成功。接入时建议把响应字段路径填 state，让平台取响应里的 {\"state\":{...}}；字段名按你 Agent 的真实返回改。仿真模式下 mock_reply 直接给终态 JSON。",
+  "cases": [
+    {
+      "id": "outcome-refund-01",
+      "stratum": "create",
+      "input": {
+        "question": "帮我给订单 O-77213 提一个退款申请，金额 1280 元。"
+      },
+      "gold": {
+        "answer": "退款单已创建，状态为待审核，金额 1280"
+      },
+      "expect": {
+        "expect_state": {"refund_status": "pending_review", "amount": 1280}
+      },
+      "mock_reply": "{\"refund_status\":\"pending_review\",\"amount\":1280,\"order_id\":\"O-77213\"}"
+    },
+    {
+      "id": "outcome-ticket-02",
+      "stratum": "create",
+      "input": {
+        "question": "给客服提一个工单：客户连续三次下单失败，优先级高。"
+      },
+      "gold": {
+        "answer": "工单已创建，状态为待处理，优先级高"
+      },
+      "expect": {
+        "expect_state": {"ticket_status": "open", "priority": "high"}
+      },
+      "mock_reply": "{\"ticket_status\":\"open\",\"priority\":\"high\",\"ticket_id\":\"T-20261111-01\"}"
+    },
+    {
+      "id": "outcome-close-03",
+      "stratum": "update",
+      "input": {
+        "question": "把工单 T-1001 关掉，原因：问题已解决。"
+      },
+      "gold": {
+        "answer": "工单状态变为已关闭"
+      },
+      "expect": {
+        "expect_state": {"ticket_status": "closed"}
+      },
+      "mock_reply": "{\"ticket_status\":\"closed\",\"ticket_id\":\"T-1001\"}"
+    }
+  ]
+}

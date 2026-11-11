@@ -1,0 +1,9 @@
+{
+  "dataset": "smoke_model_v1",
+  "version": "1.0",
+  "note": "仅用于 mock 链路冒烟；预期判定是夹具约定，不代表模型能力。评分器 keyword_rule。",
+  "cases": [
+    {"id":"model-pass", "stratum":"pass", "input":{"question":"请回复暗号：苹果。"}, "gold":{"answer":"苹果"}, "expect":{"must_mention":["苹果"]}, "mock_reply":"苹果", "smoke_expected_verdict":"pass"},
+    {"id":"model-fail", "stratum":"fail", "input":{"question":"请回复暗号：苹果。"}, "gold":{"answer":"苹果"}, "expect":{"must_mention":["苹果"]}, "mock_reply":"香蕉", "smoke_expected_verdict":"fail"}
+  ]
+}

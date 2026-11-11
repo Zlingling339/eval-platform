@@ -1,0 +1,10 @@
+{
+  "dataset":"smoke_agent_v1",
+  "version":"1.0",
+  "note":"仅用于模拟轨迹回放冒烟，不代表真实 Agent 能力。使用 tool_call_rule+trajectory_rule；mock_trace 是独立的合成实际轨迹，真实评测应替换为实际运行轨迹。缺失轨迹应为 review，非 fail。",
+  "cases":[
+    {"id":"agent-pass", "stratum":"pass", "input":{"question":"查询订单示例 A。"}, "gold":{"answer":"已查询"}, "expect":{"allowed_tools":["lookup"], "required_tools":["lookup"], "required_args":{"lookup":["id"]}, "max_tool_calls":1, "key_path":["lookup"]}, "mock_reply":"已查询", "mock_trace":{"steps":[{"type":"tool_call", "name":"lookup", "args":{"id":"A"}, "result":"已查询"}]}, "smoke_expected_verdict":"pass"},
+    {"id":"agent-fail", "stratum":"fail", "input":{"question":"查询订单示例 B。"}, "gold":{"answer":"已查询"}, "expect":{"allowed_tools":["lookup"], "required_tools":["lookup"], "required_args":{"lookup":["id"]}, "max_tool_calls":1, "key_path":["lookup"]}, "mock_reply":"已查询", "mock_trace":{"steps":[{"type":"tool_call", "name":"lookup", "args":{}, "result":"已查询"}]}, "smoke_expected_verdict":"fail"},
+    {"id":"agent-missing-trace", "stratum":"missing_trace", "input":{"question":"查询订单示例 C。"}, "gold":{"answer":"已查询"}, "expect":{"allowed_tools":["lookup"], "required_tools":["lookup"], "key_path":["lookup"]}, "mock_reply":"已查询", "smoke_expected_verdict":"review"}
+  ]
+}

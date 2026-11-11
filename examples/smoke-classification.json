@@ -1,0 +1,99 @@
+{
+  "dataset": "smoke_classification_v1",
+  "version": "1.0",
+  "note": "二分类标注示例，用于验证 accuracy / precision / recall / F1 的算法链路。任务设定：判断一条用户评论是否包含广告。gold.label 是人工标注，mock_reply 是模拟的被测输出。预期 tp=4 fp=1 fn=2 tn=3，accuracy=0.7 precision=0.8 recall=0.6667 f1=0.7273。这不是能力评测集。",
+  "task": "ads_detection",
+  "labels": ["positive", "negative"],
+  "cases": [
+    {
+      "id": "cls-tp-01",
+      "stratum": "tp",
+      "input": { "text": "加微信 xxx 领优惠券，全场五折。" },
+      "gold": { "label": "positive" },
+      "mock_reply": "{\"label\":\"positive\"}",
+      "smoke_expected": "tp"
+    },
+    {
+      "id": "cls-tp-02",
+      "stratum": "tp",
+      "input": { "text": "私信我，免费送同款小样，只有今天。" },
+      "gold": { "label": "positive" },
+      "mock_reply": "{\"label\":\"positive\"}",
+      "smoke_expected": "tp"
+    },
+    {
+      "id": "cls-tp-03",
+      "stratum": "tp",
+      "input": { "text": "扫码进群，每天发红包，先到先得。" },
+      "gold": { "label": "positive" },
+      "mock_reply": "{\"label\":\"positive\"}",
+      "smoke_expected": "tp"
+    },
+    {
+      "id": "cls-tp-04",
+      "stratum": "tp",
+      "input": { "text": "这个链接里有内部折扣码，戳我主页。" },
+      "gold": { "label": "positive" },
+      "mock_reply": "{\"label\":\"positive\"}",
+      "smoke_expected": "tp"
+    },
+    {
+      "id": "cls-fn-01",
+      "stratum": "fn",
+      "input": { "text": "想买的可以找我，比店里便宜一半。" },
+      "gold": { "label": "positive" },
+      "mock_reply": "{\"label\":\"negative\"}",
+      "smoke_expected": "fn"
+    },
+    {
+      "id": "cls-fn-02",
+      "stratum": "fn",
+      "input": { "text": "评论区第一条有福利，自己去看。" },
+      "gold": { "label": "positive" },
+      "mock_reply": "{\"label\":\"negative\"}",
+      "smoke_expected": "fn"
+    },
+    {
+      "id": "cls-tn-01",
+      "stratum": "tn",
+      "input": { "text": "这个功能更新之后好用多了，谢谢。" },
+      "gold": { "label": "negative" },
+      "mock_reply": "{\"label\":\"negative\"}",
+      "smoke_expected": "tn"
+    },
+    {
+      "id": "cls-tn-02",
+      "stratum": "tn",
+      "input": { "text": "请问这个版本支持导出吗？" },
+      "gold": { "label": "negative" },
+      "mock_reply": "{\"label\":\"negative\"}",
+      "smoke_expected": "tn"
+    },
+    {
+      "id": "cls-tn-03",
+      "stratum": "tn",
+      "input": { "text": "用了三个月，稳定性还可以，就是有点慢。" },
+      "gold": { "label": "negative" },
+      "mock_reply": "{\"label\":\"negative\"}",
+      "smoke_expected": "tn"
+    },
+    {
+      "id": "cls-fp-01",
+      "stratum": "fp",
+      "input": { "text": "客服说可以打折，我去问了确实有优惠。" },
+      "gold": { "label": "negative" },
+      "mock_reply": "{\"label\":\"positive\"}",
+      "smoke_expected": "fp"
+    }
+  ],
+  "expected_metrics": {
+    "tp": 4,
+    "fp": 1,
+    "fn": 2,
+    "tn": 3,
+    "accuracy": 0.7,
+    "precision": 0.8,
+    "recall": 0.6667,
+    "f1": 0.7273
+  }
+}

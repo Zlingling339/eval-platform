@@ -1,0 +1,42 @@
+# Local secrets and credentials
+.env
+.env.*
+!.env.example
+!.env.sample
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+**/secret.json
+**/secrets.json
+**/credentials.json
+
+# Local databases and SQLite sidecars (none are needed to bootstrap)
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+
+# Runtime uploads, generated reports, and logs
+/data/uploads/
+/reports/
+*.log
+*.log.*
+logs/
+
+# Python and tool caches, virtual environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
+.coverage
+.coverage.*
+htmlcov/
+.venv/
+venv/

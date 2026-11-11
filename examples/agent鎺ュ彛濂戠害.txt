@@ -1,0 +1,92 @@
+Agent 接口契约（接真实 Agent 时按这个填）
+============================================================
+
+一、平台会怎么调你的 Agent
+------------------------------------------------------------
+POST <你填的接口地址>
+Content-Type: application/json
+请求体 = 数据集 case 的 input（或在页面「请求体模板」里做字段映射）
+
+例：input 是 {"question": "帮我查一下杭州明天会不会下雨"}
+平台就发：
+  {"question": "帮我查一下杭州明天会不会下雨"}
+
+如果模板填 {"message": "{question}"}，就发 {"message": "..."}。
+{question} 取自 input 的一级字段；{input} 表示整个 input 对象。
+
+
+二、你的 Agent 要返回什么
+------------------------------------------------------------
+最少要有一段可判分的输出；要评工具或终态，还要有 trace / state：
+
+{
+  "output": "杭州明天小雨，建议带伞。",
+  "trace": {
+    "steps": [
+      {"type": "tool_call", "name": "get_weather",
+       "args": {"city": "杭州", "date": "明天"},
+       "result": "小雨 22~27℃"},
+      {"type": "final", "content": "杭州明天小雨，建议带伞。"}
+    ]
+  },
+  "state": {"ticket_status": "open", "priority": "high"}
+}
+
+- output：自然语言回答。页面「响应字段路径」填 output
+- trace.steps：工具轨迹。平台只从响应顶层 trace 取，不接受嵌套
+- state：任务结束后的结构化终态。评终态时响应字段路径填 state
+
+步骤对象只用两种 type：
+  tool_call  —— 必须有 name（工具名，要和你数据集里的工具名一致）、args（对象）
+  final      —— 收尾，不计入轨迹步数
+
+
+三、页面怎么填
+------------------------------------------------------------
+执行目标：HTTP 接口（仅输出评测）
+你的接口地址：https://your-agent.example.com/run
+方法：POST
+响应字段路径：
+    评工具/轨迹 → output
+    评终态     → state
+请求体模板：{"question": "{question}"}
+超时：按你的 Agent 耗时设，长任务给 60~120 秒
+
+评测方式选「独立 Agent 评测（直接打接口）」，不需要建产品。
+想先验结构，勾「本地仿真」——平台会回放数据集里的 mock_trace，不联网。
+
+
+四、三份示例数据配什么
+------------------------------------------------------------
+examples/agent-tool-real.json      3 条  工具调用 + 关键路径
+    评分器：tool_call_rule+trajectory_rule
+    看：该调的调了没、参数齐不齐、关键步骤顺序对不对
+
+examples/agent-guard-real.json     2 条  边界与越权
+    评分器：tool_call_rule
+    看：闲聊时有没有乱调工具、危险操作有没有走审批
+
+examples/agent-outcome-real.json   3 条  终态
+    评分器：outcome_rule
+    看：回复说成功、状态是不是真的变了
+
+
+五、四个最常见的问题
+------------------------------------------------------------
+1) 全部「待复核：缺少有效轨迹」
+   响应里没有顶层 trace，或 trace.steps 不是数组。
+   修：把工具调用记录放进 {"trace":{"steps":[...]}}。
+
+2) 工具被判「越权调用」
+   数据集 expect.allowed_tools 是你手写的白名单。Agent 真实工具比它多，
+   就会误判。修：把 Agent 全部工具名补进 allowed_tools。
+
+3) 关键路径「缺步骤」
+   trace 里的 name 和数据集 key_path 里的名字必须完全一致（大小写、下划线）。
+
+4) 终态「不一致」
+   state 的字段名和取值类型要对齐。先跑一次看平台读到的实际 state，
+   再去改 expect.expect_state，别凭想象写。
+
+这些数据是通用示例，工具名（get_weather / book_room / ...）要换成你
+Agent 的真实工具名。用例本身可直接改 input 复用到自己的业务。

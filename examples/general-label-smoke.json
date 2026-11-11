@@ -1,0 +1,9 @@
+{
+  "dataset":"general_label_smoke_v1", "version":"1.0", "note":"链路冒烟而非能力基准；只使用 label_match。positive 表示文本明确表达正面评价，negative 表示明确表达负面评价。",
+  "cases":[
+    {"id":"label-01","input":{"question":"判断评论情绪，只返回 JSON，如 {\"label\":\"positive\"}；positive 表示正面，negative 表示负面。评论：交付准时，体验很好。"},"gold":{"label":"positive"},"mock_reply":"{\"label\":\"positive\"}","smoke_expected_verdict":"pass"},
+    {"id":"label-02","input":{"question":"判断评论情绪，只返回 JSON，如 {\"label\":\"negative\"}；positive 表示正面，negative 表示负面。评论：软件反复崩溃，非常失望。"},"gold":{"label":"negative"},"mock_reply":"{\"label\":\"negative\"}","smoke_expected_verdict":"pass"},
+    {"id":"label-03","input":{"question":"判断评论情绪，只返回 JSON，如 {\"label\":\"positive\"}；positive 表示正面，negative 表示负面。评论：客服耐心解决了问题，很满意。"},"gold":{"label":"positive"},"mock_reply":"{\"label\":\"negative\"}","smoke_expected_verdict":"fail"},
+    {"id":"label-04","input":{"question":"判断评论情绪，只返回 JSON，如 {\"label\":\"negative\"}；positive 表示正面，negative 表示负面。评论：包装破损，体验很差。"},"gold":{"label":"negative"},"mock_reply":"无法判断","smoke_expected_verdict":"review"}
+  ]
+}

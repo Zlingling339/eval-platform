@@ -1,0 +1,45 @@
+id: general_quality
+label: 通用回答质量（兜底）
+version: 1
+applies_to: [any]
+threshold: 0.65
+note: |
+  没有任何专用评分器能套的时候用它。刻意写得通用、维度少——
+  通用 rubric 的代价是区分力弱，只能拦住明显的坏答案，
+  不能替代针对具体任务的判定表。能写专用 rubric 就不要用这个。
+
+dimensions:
+  - key: correctness
+    label: 结论正确性
+    weight: 0.40
+    gate: true
+    levels:
+      2: 结论与参考答案一致，关键事实无错误
+      1: 主体方向正确，有一处非关键的事实误差
+      0: 结论与参考答案矛盾，或关键事实错误
+    evidence: quote
+    mock_hint:
+      2: ["正确", "一致", "符合"]
+      0: ["错误", "不正确", "矛盾"]
+
+  - key: instruction_following
+    label: 指令遵循
+    weight: 0.30
+    levels:
+      2: 格式、长度、范围等显式要求全部满足
+      1: 满足主要要求，有一项次要要求未满足（如超长）
+      0: 违反核心格式或范围要求
+    mock_hint:
+      2: ["按要求", "如下"]
+      0: ["无法满足", "我改成了"]
+
+  - key: clarity
+    label: 表达清晰度
+    weight: 0.30
+    levels:
+      2: 结构清楚，读者一遍能懂，没有自相矛盾
+      1: 整体可读，但有一段冗余或指代不清
+      0: 逻辑混乱或自相矛盾，需要反复读
+    mock_hint:
+      2: ["第一", "其次", "总结"]
+      0: ["另一方面", "也就是说", "其实"]

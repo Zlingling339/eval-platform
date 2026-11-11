@@ -1,0 +1,8 @@
+{
+  "dataset": "general_example_v1",
+  "note": "通用问答示例；仅用于演示关键词规则，不代表真实测评结果。",
+  "cases": [
+    {"id": "example-01", "stratum": "basic", "input": {"question": "水在标准大气压下的沸点是多少摄氏度？"}, "expect": {"must_mention": ["100"]}, "mock_reply": "标准大气压下水的沸点是100摄氏度。"},
+    {"id": "example-02", "stratum": "basic", "input": {"question": "一周有多少天？"}, "expect": {"must_mention": ["7", "七"]}, "mock_reply": "一周有7天。"}
+  ]
+}

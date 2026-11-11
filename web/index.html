@@ -1,0 +1,2095 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LLM 评测平台</title>
+<link rel="icon" href="data:,">
+<style>
+/* ===================================================================
+   手账风（Looseleaf 移植版）· 见 skills/looseleaf-handdrawn-ui
+   原则：界面是一张纸。桌布 → 纸页 → 墨 → 手绘线 → 贴上去的东西
+   =================================================================== */
+@font-face{
+  font-family:"LL Hand";
+  src:url(data:font/woff2;base64,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) format("woff2");
+  font-weight:400;font-style:normal;font-display:swap;
+}
+:root{
+  /* 兼容旧变量名，JS 内联样式不用改 */
+  --ink:#2a2420; --ink2:#4a423b; --ink3:#6b6660;
+  --paper:#f8f5ee; --sunk:#f2ecdc; --card:#fbf8f1;
+  --line:#d9d2c2; --line2:#c2b7a1; --accent:#df6b3c;
+  --ok:#3b7a4b; --bad:#c2412d;
+  /* 新增 */
+  --desk:#a8c8bb; --desk-deep:#93b4a7; --kraft:#dcc8a3; --pad:#f8f2de;
+  --hi:#f8dc4c; --blue:#2c4f9e; --pencil:#8e887f;
+  --rule:rgba(143,176,212,.30); --rule-red:rgba(217,119,106,.45);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  --hand:"LL Hand","Segoe Print","Bradley Hand",cursive;
+  --kai:"Kaiti SC","STKaiti","KaiTi","楷体","LXGW WenKai","AR PL UKai CN","Noto Serif CJK SC","Songti SC",serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+
+/* ── 桌面 ─────────────────────────────────────────────────────── */
+body{
+  background-color:var(--desk);
+  background-image:
+    repeating-linear-gradient(58deg,rgba(255,255,255,.055) 0 2px,transparent 2px 5px),
+    repeating-linear-gradient(-32deg,rgba(0,0,0,.022) 0 1px,transparent 1px 6px),
+    radial-gradient(ellipse 90% 70% at 50% 0%,rgba(255,255,255,.14),transparent 72%);
+  color:var(--ink);font:15.6px/1.6 var(--sans);-webkit-font-smoothing:antialiased;
+}
+.num{font-family:var(--hand);font-variant-numeric:tabular-nums;letter-spacing:.01em;font-size:1.06em}
+.app{display:grid;grid-template-columns:192px 1fr;min-height:100vh}
+
+/* ── 侧栏：牛皮纸 + 活页孔 ─────────────────────────────────────── */
+.side{
+  position:sticky;top:0;height:100vh;padding:22px 0 0;overflow-y:auto;
+  background-color:var(--kraft);
+  background-image:
+    repeating-linear-gradient(92deg,rgba(255,255,255,.10) 0 1px,transparent 1px 7px),
+    repeating-linear-gradient(4deg,rgba(120,92,40,.05) 0 1px,transparent 1px 5px);
+  border-right:1px solid rgba(120,92,40,.35);
+  box-shadow:inset -8px 0 14px -12px rgba(42,36,30,.6);
+}
+/* 活页孔：一列凹陷圆 */
+.side::before{
+  content:"";position:absolute;left:11px;top:0;bottom:0;width:12px;
+  background-image:radial-gradient(circle at 6px 6px,var(--desk-deep) 5.5px,transparent 6px);
+  background-size:12px 74px;background-position:0 26px;background-repeat:repeat-y;
+  opacity:.85;pointer-events:none;
+}
+.brand{padding:0 18px 14px 40px;margin-bottom:8px;border-bottom:1.6px solid var(--pencil);
+  filter:none}
+.brand b{display:block;font-family:var(--kai);font-size:22.8px;font-weight:700;letter-spacing:.04em}
+.brand span{display:block;font-family:var(--hand);font-size:12.6px;letter-spacing:.16em;
+  color:#7a6440;text-transform:uppercase;margin-top:1px}
+.nav{display:flex;flex-direction:column;gap:1px;padding:6px 10px 0 34px}
+.nav button{
+  position:relative;isolation:isolate;background:none;border:none;text-align:left;
+  padding:6px 10px 6px 12px;font-family:var(--kai);font-size:16.8px;color:#5a4a33;
+  cursor:pointer;transition:transform .12s,color .12s;
+}
+.nav button::before{
+  content:"";position:absolute;inset:1px 2px;z-index:-1;opacity:0;
+  background:var(--paper);border:1.5px solid var(--ink);
+  border-radius:4px 2px 5px 3px;filter:url(#ll-wobble-soft);transition:opacity .12s;
+}
+.nav button:hover{color:var(--ink);transform:rotate(-.4deg)}
+.nav button:hover::before{opacity:.55}
+.nav button.on{color:var(--ink);font-weight:700;transform:rotate(-.7deg)}
+.nav button.on::before{opacity:1;background:var(--paper)}
+/* 选中项左边一个小三角，像用铅笔戳的记号 */
+.nav button.on::after{
+  content:"";position:absolute;left:-12px;top:50%;margin-top:-4px;
+  border:4px solid transparent;border-left-color:var(--accent);
+}
+.stat{position:static;width:100%;padding:12px 16px 14px 40px;
+  border-top:1.6px solid var(--pencil);font-family:var(--hand);font-size:13.2px;color:#6d5a38}
+.stat i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:1px}
+
+/* ── 主区：纸页 ───────────────────────────────────────────────── */
+.main{
+  position:relative;margin:20px 24px 26px 0;padding:30px 34px 48px 88px;
+  max-width:1560px;
+  background-color:var(--paper);
+  background-image:repeating-linear-gradient(to bottom,transparent 0 27px,var(--rule) 27px 28px);
+  background-position:0 10px;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.85) inset,
+    0 20px 44px -20px rgba(42,36,30,.5),
+    2px 2px 0 var(--kraft),-2px 0 0 #efe9dc;
+}
+/* 页边红线 */
+.main::before{
+  content:"";position:absolute;top:0;bottom:0;left:64px;width:1px;
+  background:var(--rule-red);opacity:.8;pointer-events:none;
+}
+/* 贴在上沿的胶带 */
+.main::after{
+  content:"";position:absolute;top:-12px;left:44px;width:104px;height:24px;
+  background:rgba(246,244,236,.66);border-left:1px dashed rgba(140,135,120,.42);
+  border-right:1px dashed rgba(140,135,120,.42);
+  box-shadow:0 1px 3px rgba(42,36,30,.16);transform:rotate(-2.4deg);
+  mix-blend-mode:multiply;pointer-events:none;
+}
+
+/* 页头 */
+.hd{display:flex;justify-content:space-between;align-items:flex-end;
+  padding-bottom:12px;margin-bottom:20px;
+  border-bottom:2px solid var(--ink);position:relative}
+.hd::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:2px;
+  background:var(--pencil);opacity:.35;border-radius:2px}
+.hd h1{font-family:var(--kai);font-size:32.4px;font-weight:700;letter-spacing:.03em;
+  line-height:1.2;margin-top:2px;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='8'><path d='M1 5 Q 38 1.4 75 4.4 T 149 3.4' fill='none' stroke='%23df6b3c' stroke-width='1.8' stroke-linecap='round'/></svg>");
+  background-repeat:no-repeat;background-position:2px 100%;background-size:150px 8px;
+  padding-bottom:8px;display:inline-block}
+.eyebrow{font-family:var(--hand);font-size:13.2px;letter-spacing:.2em;
+  text-transform:uppercase;color:#8a7452}
+h2{font-family:var(--kai);font-size:19.2px;font-weight:700;letter-spacing:.02em;
+  margin:24px 0 6px;padding-bottom:6px;display:flex;justify-content:space-between;
+  align-items:baseline;border-bottom:1.6px solid var(--pencil)}
+h2 .c{font-family:var(--hand);font-size:13.8px;color:var(--ink3);font-weight:400;
+  letter-spacing:.02em;text-transform:none}
+
+/* ── 表格：账本（横线为主，竖线极淡；不给行套滤镜） ──────────── */
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:6px 12px 6px 0;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--kai);font-size:15px;color:var(--ink2);font-weight:700;
+  border-bottom:2px solid var(--pencil);background:rgba(248,242,222,.5);
+  padding:7px 12px 6px 0}
+td{font-size:15px;line-height:1.55}
+td.r,th.r{text-align:right;padding-right:0}
+tr:hover td{background:rgba(248,220,76,.16)}
+.click{cursor:pointer}
+
+/* ── 表单 ─────────────────────────────────────────────────────── */
+label{display:block;font-family:var(--kai);font-size:15.6px;color:var(--ink2);
+  margin:12px 0 3px}
+input,select,textarea{
+  width:100%;background:transparent;padding:5px 8px;
+  font:13px/1.5 var(--sans);color:var(--blue);
+  border:none;border-bottom:1.6px solid var(--pencil);border-radius:0;outline:none;
+}
+input:focus,select:focus,textarea:focus{
+  border-bottom-color:var(--accent);background:rgba(248,220,76,.18)}
+select{color:var(--ink);cursor:pointer}
+textarea{font-family:var(--mono);font-size:14.4px;line-height:24px;min-height:200px;
+  background-color:rgba(255,253,246,.6);
+  background-image:repeating-linear-gradient(to bottom,transparent 0 23px,var(--rule) 23px 24px);
+  border:1.6px solid var(--pencil);border-radius:3px;padding:4px 10px;color:var(--ink2)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+
+/* 按钮：手绘边 */
+button.act,button.ghost{
+  position:relative;isolation:isolate;border:none;cursor:pointer;
+  font-family:var(--kai);font-size:16.8px;font-weight:700;letter-spacing:.04em;
+  padding:6px 18px;transition:transform .12s;
+}
+button.act::before,button.ghost::before{
+  content:"";position:absolute;inset:-1px;z-index:-1;
+  border:2px solid var(--ink);border-radius:7px 3px 8px 4px/4px 8px 3px 7px;
+  filter:url(#ll-wobble);background:var(--card);
+  box-shadow:1.5px 2px 0 rgba(42,36,30,.13);
+}
+button.act{background:transparent;color:#fff8f2}
+button.act::before{background:var(--accent);border-color:#8f3f1c}
+button.ghost{background:transparent;color:var(--ink)}
+button.ghost:nth-of-type(2n){transform:rotate(.35deg)}
+button.ghost:nth-of-type(2n+1){transform:rotate(-.3deg)}
+button.act:hover{transform:rotate(-.5deg) translateY(-1px)}
+button.ghost:hover{transform:rotate(.4deg);color:var(--accent)}
+button.ghost:hover::before{background:var(--pad)}
+button:disabled{opacity:.42;cursor:not-allowed;transform:none!important}
+
+/* ── 提示块 ───────────────────────────────────────────────────── */
+.note{position:relative;background:var(--pad);padding:10px 14px 10px 16px;
+  font-size:15px;color:var(--ink2);margin:14px 0;
+  box-shadow:1px 2px 0 rgba(42,36,30,.06)}
+.note::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--accent);filter:url(#ll-wobble-soft)}
+.warn{position:relative;background:rgba(194,65,45,.07);padding:10px 14px 10px 16px;
+  font-size:15px;color:#8a3226;margin:10px 0;border:1px solid rgba(194,65,45,.28);
+  border-radius:3px}
+.ok{color:var(--ok)} .bad{color:var(--bad)}
+.pill{display:inline-block;font-family:var(--kai);font-size:13.8px;padding:1px 7px 2px;
+  border:1.3px solid currentColor;border-radius:3px;transform:rotate(-.6deg)}
+iframe{width:100%;height:1300px;border:1.6px solid var(--pencil);background:#fff;border-radius:3px}
+a{color:var(--blue);text-decoration:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='90' height='5'><path d='M1 3 Q 22 1 45 2.6 T 89 2.2' fill='none' stroke='%232c4f9e' stroke-width='1.1' stroke-linecap='round' opacity='.55'/></svg>");
+  background-repeat:repeat-x;background-position:0 100%;background-size:90px 5px;padding-bottom:2px}
+a:hover{color:#1f3b7a;background-size:90px 5px}
+
+/* KPI */
+.kpis{display:flex;gap:34px;margin:10px 0 6px;flex-wrap:wrap}
+.kpi{min-width:112px;padding-top:4px;border-top:2px solid var(--pencil)}
+.kpi span{display:block;font-family:var(--kai);font-size:14.4px;color:var(--ink2);
+  margin-bottom:1px}
+.kpi b{display:block;font-family:var(--hand);font-weight:400;font-size:32.4px;line-height:1.15;
+  letter-spacing:.01em}
+.kpi b.hi{background-image:linear-gradient(transparent 24%,rgba(248,220,76,.7) 24% 92%,transparent 92%);
+  display:inline-block;padding:0 3px}
+
+.empty{padding:30px 0;color:var(--ink3);font-size:15px;font-family:var(--kai)}
+
+/* 上传区 */
+.drop{position:relative;isolation:isolate;padding:22px;cursor:pointer;
+  display:flex;align-items:center;gap:14px;transition:transform .12s}
+.drop::before{content:"";position:absolute;inset:0;z-index:-1;
+  border:1.8px dashed var(--pencil);border-radius:5px 3px 6px 4px;
+  background:rgba(255,253,246,.6);filter:url(#ll-wobble-soft)}
+.drop:hover{transform:rotate(-.3deg)}
+.drop:hover::before{border-color:var(--ink);background:var(--pad)}
+.drop.has::before{border-style:solid;border-color:var(--ok);background:rgba(59,122,75,.06)}
+.drop .ico{width:30px;height:30px;flex:0 0 30px;display:flex;align-items:center;
+  justify-content:center;font-family:var(--hand);font-size:18px;color:var(--ink3);
+  border:1.5px solid var(--pencil);border-radius:4px 2px 5px 3px}
+.drop.has .ico{border-color:var(--ok);color:var(--ok)}
+.drop .txt b{display:block;font-family:var(--kai);font-size:16.8px;font-weight:700}
+.drop .txt span{font-size:13.8px;color:var(--ink3)}
+
+.endline{border-bottom:1.6px solid var(--pencil);filter:url(#ll-wobble-soft);height:1px;margin-top:2px}
+pre{background:rgba(240,235,222,.7);padding:10px 12px;font:11.5px/1.7 var(--mono);
+  white-space:pre-wrap;word-break:break-word;color:var(--ink2);
+  border-left:2px solid var(--pencil);border-radius:2px}
+
+/* 版本表单：两侧用不同颜色纸条区分 */
+.verbox{position:relative;padding:10px 14px 12px;margin:14px 0;
+  background:rgba(255,253,246,.62);border-radius:3px;
+  border:1.5px solid var(--pencil)}
+.verbox.p{border-color:var(--accent);background:rgba(223,107,60,.055)}
+.verbox.d{border-color:#1F4E79;background:rgba(31,78,121,.05)}
+.verhead{font-family:var(--kai);font-size:15.6px;font-weight:700;letter-spacing:.06em;
+  color:var(--ink2);margin-bottom:0}
+.verbox.p .verhead{color:var(--accent)} .verbox.d .verhead{color:#1F4E79}
+
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin:8px 0 2px;font-size:13.8px;color:var(--ink2)}
+.legend i{display:inline-block;width:18px;height:3px;margin-right:6px;vertical-align:3px;
+  border-radius:2px}
+.legend .hint{color:var(--ink3);font-size:13.8px;font-family:var(--kai)}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0 10px}
+
+/* ── 台账表 ───────────────────────────────────────────────────── */
+.ledwrap{overflow-x:auto;border:1.6px solid var(--pencil);border-radius:3px;
+  background:#fbf8f1;box-shadow:1px 2px 0 rgba(42,36,30,.05)}
+table.led{border-collapse:separate;border-spacing:0;min-width:100%}
+table.led th,table.led td{padding:6px 10px;white-space:nowrap;
+  border-bottom:1px solid var(--line)}
+table.led th{position:sticky;top:0;z-index:2;background:#f4eeda;
+  border-bottom:2px solid var(--pencil);font-size:14.4px}
+table.led th.fix,table.led td.fix{position:sticky;left:0;z-index:1;
+  background:#fbf8f1;border-right:1px solid var(--line2);min-width:158px}
+table.led th.fix{z-index:3;background:#f4eeda}
+table.led tr.sel td{background:rgba(248,220,76,.3)}
+table.led tr.sel td.fix{background:#f7edc4}
+table.led tr:hover td{background:rgba(248,220,76,.15)}
+table.led tr:hover td.fix{background:#f6f0dd}
+table.led td.m{text-align:right;font-family:var(--hand);font-variant-numeric:tabular-nums;
+  min-width:84px;line-height:1.4;font-size:16.8px}
+table.led th.m{text-align:right;min-width:84px}
+td.m .v{display:block}
+td.m .d2{display:block;font-size:12.6px;font-family:var(--sans);margin-top:1px;opacity:.85}
+.delta{font-family:var(--hand);font-size:14.4px;margin-left:5px}
+.up{color:var(--ok)} .down{color:var(--bad)} .flat{color:var(--ink3)}
+table.led input[type=checkbox]{width:auto;accent-color:var(--accent)}
+
+/* 底部操作条：牛皮纸压条 */
+.bar{position:sticky;bottom:0;display:flex;justify-content:space-between;align-items:center;
+  padding:9px 16px;font-size:15.6px;
+  background:var(--kraft);
+  background-image:repeating-linear-gradient(92deg,rgba(255,255,255,.1) 0 1px,transparent 1px 7px);
+  border-top:2px solid var(--pencil);color:#4a3a22;font-family:var(--kai);
+  box-shadow:0 -6px 16px -12px rgba(42,36,30,.7)}
+.bar button{position:relative;background:var(--paper);border:1.4px solid var(--ink);
+  color:var(--ink);padding:4px 14px;font-family:var(--kai);font-size:16.2px;
+  font-weight:700;cursor:pointer;border-radius:4px 2px 5px 3px}
+.bar button:hover{background:var(--pad);transform:rotate(-.5deg)}
+
+/* 并置对比表 */
+.cmp{margin-top:8px;overflow-x:auto;background:#fbf8f1;border:1.4px solid var(--pencil);
+  border-radius:3px;padding:0 4px}
+table.cmp{border-collapse:collapse;min-width:100%}
+table.cmp th,table.cmp td{padding:7px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.cmp th{font-family:var(--kai);font-size:15px;color:var(--ink2);font-weight:700;
+  border-bottom:2px solid var(--pencil);text-align:right;background:rgba(248,242,222,.5)}
+table.cmp th:first-child,table.cmp td:first-child{text-align:left}
+table.cmp td{font-family:var(--hand);font-variant-numeric:tabular-nums;text-align:right;
+  font-size:18px}
+table.cmp td:first-child{font-family:var(--kai);font-size:15.6px}
+
+/* 变更标记：P / D */
+.chg{display:inline-block;font-family:var(--hand);font-size:12.6px;padding:0 4px;margin-left:5px;
+  border:1.2px solid currentColor;border-radius:2px;vertical-align:1px;transform:rotate(-1deg)}
+td.hit-p{background:rgba(223,107,60,.13)!important;border-left:3px solid var(--accent)}
+td.hit-d{background:rgba(31,78,121,.1)!important;border-left:3px solid #1F4E79}
+
+/* 判定印章 —— 台账/对比里的「合格/不合格」 */
+.stamp{display:inline-block;font-family:var(--kai);font-size:15px;font-weight:700;
+  letter-spacing:.1em;padding:1px 8px 2px;transform:rotate(-6deg);
+  border:2.1px solid var(--bad);color:var(--bad);border-radius:4px;
+  filter:url(#ll-rough);opacity:.9;white-space:nowrap}
+.stamp.pass{border-color:var(--ok);color:var(--ok)}
+
+.badge{display:inline-block;font-family:var(--hand);font-size:13.2px;padding:1px 6px;
+  border:1.3px solid currentColor;border-radius:2px}
+.dl{font-family:var(--hand);font-size:13.8px;color:var(--ink3)}
+
+/* 备注小字（台账行内） */
+.lnote{display:block;font-size:12.6px;color:var(--ink3);line-height:1.4;
+  max-width:230px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  font-family:var(--sans)}
+.lnote.p::before{content:"P ";font-family:var(--hand);color:var(--accent)}
+.lnote.d::before{content:"D ";font-family:var(--hand);color:#1F4E79}
+
+
+/* 趋势图：纸上的图表，去掉纯白直角框 */
+#trend{background:#fdfbf5;border:1.2px solid var(--line);border-radius:3px;
+  padding:6px 4px 2px;margin-top:4px}
+/* 表头里的英文/版本号用等宽，中文用楷体 */
+th.hand{font-family:var(--hand);font-size:14.4px;letter-spacing:.06em}
+/* 行内备注（P/D 前缀） */
+.lnote{display:block;font-size:12.6px;color:var(--ink3);line-height:1.45;
+  max-width:186px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── 总览 / 模型角色 / 复核（新视图，沿用同一套纸墨，不引入新语言）── */
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0 4px}
+.cards .verbox{margin:0}
+.ovbar{display:inline-block;width:78px;height:9px;vertical-align:-1px;
+  border:1.3px solid var(--pencil);border-radius:2px;background:rgba(255,253,246,.75);
+  overflow:hidden;margin-right:7px}
+.ovbar i{display:block;height:100%;background:var(--ok)}
+.ovbar i.mid{background:#b9871c}
+.ovbar i.low{background:var(--bad)}
+.dep{display:inline-block;font-family:var(--hand);font-size:12.6px;color:var(--blue);
+  border-bottom:1.3px dashed var(--line2);margin-top:2px;white-space:nowrap}
+.rbg{display:inline-block;font-family:var(--kai);font-size:13.8px;padding:0 6px 1px;
+  border:1.3px solid var(--pencil);border-radius:3px;color:var(--ink3);white-space:nowrap}
+.rbg.y{color:var(--ok);border-color:var(--ok)}
+.rbg.n{color:var(--bad);border-color:var(--bad)}
+button.mini{padding:1px 9px;font-size:13.8px}
+.cards input,.cards select{font-size:14.4px}
+
+@media(max-width:900px){
+  .app{grid-template-columns:1fr}
+  .cards{grid-template-columns:1fr}
+  .side{position:static;height:auto;padding-bottom:8px}
+  .side::before{display:none}
+  .nav{flex-direction:row;flex-wrap:wrap;padding-left:16px}
+  .stat{position:static}
+  .main{margin:12px;padding:22px 20px 40px}
+  .main::before{display:none}
+  .row{grid-template-columns:1fr}
+}
+.nav-group{padding:14px 12px 3px;color:var(--ink3);font-size:12px;font-weight:700;letter-spacing:.08em}.grader-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}.grader-card{border:1px solid var(--pencil);padding:10px;background:#fbf8f1}.grader-card summary{cursor:pointer;font-weight:700}.grader-card button{margin-top:8px}@media(max-width:700px){.grader-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<svg aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+  <filter id="ll-wobble" x="-8%" y="-8%" width="116%" height="116%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.026" numOctaves="3" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3.0" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <filter id="ll-wobble-soft" x="-8%" y="-8%" width="116%" height="116%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="3" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="1.1" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <filter id="ll-rough" x="-10%" y="-10%" width="120%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="4" seed="11" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="1.5" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><b>评测平台</b><span>local only</span></div>
+    <nav class="nav" id="nav">
+      <button data-v="overview">总览 / 使用引导</button>
+      <div class="nav-group">准备评测</div>
+      <button data-v="models">模型与 API 配置</button><button data-v="datasets">测试集</button><button data-v="prompts">Prompt 管理</button><button data-v="adapter">产品接入（可选）</button>
+      <div class="nav-group">开始评测</div>
+      <button data-v="modelRun">模型评测</button><button data-v="agentRun">Agent 评测</button><button data-v="uiRun">产品界面评测</button>
+      <div class="nav-group">查看结果</div>
+      <button data-v="runs">运行记录与报告</button><button data-v="compare">指标对比</button><button data-v="ledger">指标台账</button>
+      <div class="nav-group">管理</div><button data-v="versions">版本记录</button><button data-v="settings">设置</button>
+    </nav>
+    <div class="stat" id="stat">检查中…</div>
+  </aside>
+
+  <main class="main">
+    <div class="hd">
+      <div><div class="eyebrow" id="eyebrow">Datasets</div><h1 id="title">评测集</h1></div>
+      <div style="text-align:right">
+        <div id="hdmeta" style="font-size:13.2px;color:var(--ink3)"></div>
+        <div style="font-family:var(--hand);font-size:15px;letter-spacing:.08em;color:#8a7452;
+             margin-top:2px" id="hddate"></div>
+      </div>
+    </div>
+    <div id="view"></div>
+  </main>
+</div>
+
+<script>
+const S = {products:[], datasets:[], prompts:[], roles:[], runs:[], view:'overview', cur:null, poll:null, pickRole:''};
+
+/* 配置只保存在当前浏览器；请求时临时注入，避免写入后端。localStorage 不是安全存储：同源脚本可读取，勿在共享/不可信浏览器保存生产密钥。 */
+const CFG_KEY = 'eval-platform.api-config.v1';
+function loadCfg(){
+  try { return JSON.parse(localStorage.getItem(CFG_KEY) || '{}') || {}; } catch(e){ return {}; }
+}
+function saveCfg(patch){
+  const next = {...loadCfg(), ...patch};
+  localStorage.setItem(CFG_KEY, JSON.stringify(next));
+  return next;
+}
+function clearCfg(){ try { localStorage.removeItem(CFG_KEY); } catch(e) {} }
+function roleKeys(){ const keys=loadCfg().model_api_keys; return keys && typeof keys==='object' && !Array.isArray(keys) ? Object.fromEntries(Object.entries(keys).filter(([k,v])=>typeof v==='string' && v.trim()).map(([k,v])=>[k,v.trim()])) : {}; }
+/* 被测模型配置有两个可写入口：
+   ①「设置」页的顶层 model / model_url / model_key；
+   ②「模型与API配置」页的 target 角色卡（存后端 /api/models，Key 存本地 model_api_keys.target）。
+   两处都写过时以设置页为准；设置页没写的项回退到 target 角色卡，否则在角色卡里配好了模型、
+   评测页却显示「未配置」。 */
+function targetRole(){
+  const rs = (typeof S !== 'undefined' && S.roles) || [];
+  return rs.find(r=>r && r.role==='target') || null;
+}
+function modelCfg(){
+  const c = loadCfg();
+  const tr = targetRole() || {};
+  const topModel = (c.model||'').trim(), topUrl = (c.model_url||'').trim(), topKey = (c.model_key||'').trim();
+  const roleModel = (tr.model||'').trim(), roleUrl = (tr.base_url||'').trim();
+  const roleKey = roleKeys().target || '';
+  return {
+    api_key: topKey || roleKey,
+    base_url: topUrl || roleUrl,
+    model: topModel || roleModel,
+    vendor: (tr.vendor||'').trim(),
+    source: topModel ? 'settings' : (roleModel ? 'role' : 'none'),
+    key_source: topKey ? 'settings' : (roleKey ? 'role' : 'none'),
+    role_adapter: tr.adapter || '',
+  };
+}
+function productCfg(){ const c=loadCfg(); return {url:(c.product_url||'').trim(), method:c.product_method||'POST', response_path:(c.product_path||'').trim(), timeout:Number(c.product_timeout)||30, body_template:c.product_body||null, api_key:(c.product_key||'').trim()}; }
+
+async function api(p, opt){
+  const r = await fetch(p, opt);
+  const t = await r.text();
+  let d; try { d = JSON.parse(t); } catch(e){ d = {detail:t}; }
+  if(!r.ok) throw new Error(d.detail || ('HTTP '+r.status));
+  return d;
+}
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pct = v => v==null ? '—' : (v<=1 ? (v*100).toFixed(1)+'%' : v.toFixed(2));
+/* /api/products 返回的字段名是 source（值为 db / builtin / example），不是 _source */
+const srcLabel = s => ({db:'界面创建', builtin:'内置', example:'示例'}[s] || (s ? String(s) : '未知'));
+
+function emptyProducts(){ return '<div class="empty">还没有产品或可用环节。可先接入产品，或加载通用示例。<div style="margin-top:12px"><button class="act" data-load-example>加载通用示例</button> <button class="ghost" data-open-adapter>接入产品</button></div><div data-example-msg></div></div>'; }
+document.getElementById('view').addEventListener('click', async e=>{
+  if(e.target.closest('[data-open-adapter]')) return setView('adapter');
+  const btn=e.target.closest('[data-load-example]'); if(!btn) return;
+  btn.disabled=true;
+  try{ await api('/api/examples/general',{method:'POST'}); S.products=await api('/api/products'); S.ledProduct=null; S.ledStage=null; setView(S.view); }
+  catch(err){ btn.closest('.empty').querySelector('[data-example-msg]').textContent='加载失败：'+err.message; btn.disabled=false; }
+});
+
+function setView(v){
+  S.view = v;
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
+  const names = {overview:['Overview','总览'], ledger:['Ledger','指标台账'], datasets:['Datasets','评测集'],
+                 prompts:['Prompts','Prompt 版本'], run:['Run','运行评测'],
+                 runs:['Runs','运行记录与报告'], compare:['Compare','指标对比'], versions:['Versions','版本记录'], adapter:['Adapter','接入产品'],
+                 models:['Models','模型角色'], settings:['Settings','设置'], modelRun:['Model','模型评测'], agentRun:['Agent','Agent 评测'], uiRun:['Interface','产品界面评测']};
+  document.getElementById('eyebrow').textContent = names[v][0];
+  document.getElementById('title').textContent = names[v][1];
+  document.getElementById('hdmeta').textContent = '';
+  const dd = new Date();
+  document.getElementById('hddate').textContent =
+    `${dd.getFullYear()}.${String(dd.getMonth()+1).padStart(2,'0')}.${String(dd.getDate()).padStart(2,'0')}`;
+  ({overview:viewOverview, ledger:viewLedger, datasets:viewDatasets, prompts:viewPrompts, run:viewRun,
+    versions:viewVersions, runs:viewRuns, compare:viewCompare, adapter:viewAdapter, models:viewModels, settings:viewSettings,
+    modelRun:()=>viewRun('model'), agentRun:()=>viewRun('agent'), uiRun:viewProductUI})[v]();
+}
+document.getElementById('nav').addEventListener('click', e=>{
+  const b = e.target.closest('button');
+  if(b){ S.cur = null; setView(b.dataset.v); }
+});
+
+/* ─────────── 评测集 ─────────── */
+async function viewDatasets(){
+  S.datasets = await api('/api/datasets');
+  let q = {pending:[], approved:[], rejected:[]};
+  try{ q = await api('/api/datasets/queue'); }catch(e){}
+  S.dsQueue = q;
+  const nPend = (q.pending||[]).length, nOk = (q.approved||[]).length, nBad = (q.rejected||[]).length;
+  const f = S.dsFilter || '';
+  const shown = S.datasets.filter(d=>{
+    const rv = d.reviewed || '';
+    if(f==='pending') return !rv;
+    if(f==='approved') return rv==='yes';
+    if(f==='rejected') return rv==='no';
+    return true;
+  });
+  const qbtn = (k, label) => `<button class="ghost mini" data-q="${k}"
+    style="margin-left:6px${f && f===k?';color:var(--accent);text-decoration:underline':''}">${label}</button>`;
+  const rvBadge = d => d.reviewed==='yes' ? '<span class="rbg y">已复核</span>'
+    : d.reviewed==='no' ? `<span class="rbg n" title="${esc(d.review_note||'')}">未通过</span>`
+    : '<span class="rbg">未复核</span>';
+  const v = document.getElementById('view');
+  v.innerHTML = `
+    <div class="note" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <span>待复核 <b class="num">${nPend}</b> 条
+        ${nPend ? '<span style="color:var(--ink3)">— 这些题还没人读过，跑出来的分数不能直接当结论</span>'
+                : '<span style="color:var(--ok)">— 没有待复核的题了</span>'}</span>
+      <span style="margin-left:auto;display:flex;align-items:center">
+        ${qbtn('pending','待复核 '+nPend)}${qbtn('approved','已复核 '+nOk)}${qbtn('rejected','未通过 '+nBad)}${qbtn('','全部 '+S.datasets.length)}
+      </span>
+    </div>
+    <h2>上传评测集<span class="c">JSON 或 CSV</span></h2>
+    <div class="row">
+      <div>
+        <label>选择产品 / 环节（用于归类）</label>
+        <div class="row">
+          <select id="dsProduct">${S.products.map(p=>`<option value="${p.product}">${esc(p.name)}</option>`).join('')}</select>
+          <select id="dsStage"></select>
+        </div>
+      </div>
+      <div>
+        <label>文件</label>
+        <div class="drop" id="drop">
+          <div class="ico" id="dropIco">＋</div>
+          <div class="txt" id="dropTxt">
+            <b>点击选择 或 拖拽文件到这里</b>
+            <span>JSON（本项目格式）/ CSV（表头 id,stratum,input,gold）</span>
+          </div>
+        </div>
+        <input type="file" id="dsFile" accept=".json,.csv" style="display:none">
+      </div>
+    </div>
+    <div class="note">
+      每条用例必须带 <code>id</code> 和 <code>gold</code>（标准答案）。<b>没有 gold 就无法判分</b>——这是评测和"随便跑跑看"的分界线。
+    </div>
+    <button class="act" id="dsUp">上传并校验</button>
+    <div id="dsResult"></div>
+    <h2>已上传<span class="c">${f ? shown.length+' / '+S.datasets.length : S.datasets.length}</span></h2>
+    <table><thead><tr><th>名称</th><th>产品/环节</th><th class="r">用例</th><th class="r">上传时间</th><th class="r">这套题可不可信</th><th class="r">复核</th></tr></thead>
+    <tbody>${shown.map(d=>`<tr data-id="${d.id}">
+      <td class="click">${esc(d.name)}</td><td style="color:var(--ink3)">${esc(d.product)} / ${esc(d.stage)}</td>
+      <td class="r num">${d.n_cases}</td><td class="r num" style="color:var(--ink3)">${esc(d.created_at)}</td>
+      <td class="r"><button class="ghost" data-verify="${d.id}" data-p="${esc(d.product)}" data-s="${esc(d.stage)}"
+        style="padding:2px 10px;font-size:15px">体检</button></td>
+      <td class="r" style="white-space:nowrap">
+        ${rvBadge(d)}
+        ${(d.reviewed==='no'&&d.review_note)?`<span class="lnote" title="${esc(d.review_note)}">${esc(d.review_note)}</span>`:''}
+        <div style="margin-top:4px">
+          <button class="ghost mini" data-rv="yes" data-did="${d.id}">已复核</button>
+          <button class="ghost mini" data-rv="no" data-did="${d.id}" style="margin-left:4px">不通过</button>
+        </div>
+      </td>
+    </tr>`).join('') || `<tr><td colspan="6" class="empty">${
+      S.datasets.length ? '这个筛选下没有数据集。点上面的「全部」看所有题。'
+        : '还没有评测集，请上传自己的数据。'}</td></tr>`}</tbody></table>
+    <div id="verifyOut"></div>
+    <div class="endline"></div>
+    <div id="dsDetail"></div>`;
+
+  // 自定义上传区：点击 / 拖拽都能选文件，并回显文件名
+  const drop = document.getElementById('drop');
+  const fileInput = document.getElementById('dsFile');
+  const showFile = () => {
+    const f = fileInput.files[0];
+    if (!f) return;
+    drop.classList.add('has');
+    document.getElementById('dropIco').textContent = '✓';
+    document.getElementById('dropTxt').innerHTML =
+      `<b>${esc(f.name)}</b><span>${(f.size/1024).toFixed(1)} KB · 点击可重新选择</span>`;
+  };
+  drop.onclick = () => fileInput.click();
+  fileInput.onchange = showFile;
+  ['dragover','dragenter'].forEach(ev=>drop.addEventListener(ev, e=>{
+    e.preventDefault(); drop.classList.add('drag-over');
+  }));
+  ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev, e=>{
+    e.preventDefault(); drop.classList.remove('drag-over');
+  }));
+  drop.addEventListener('drop', e=>{
+    if(e.dataTransfer.files.length){ fileInput.files = e.dataTransfer.files; showFile(); }
+  });
+
+  const fillStages = () => {
+    const pk = document.getElementById('dsProduct').value;
+    const p = S.products.find(x=>x.product===pk);
+    document.getElementById('dsStage').innerHTML = (p?.stages || []).map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
+  };
+  document.getElementById('dsProduct').onchange = fillStages; fillStages();
+
+  // ── 评卷体检：参考答案 / 白卷 / 无脑执行 三条基线对照 ──
+  const verify = async (did, product, stage) => {
+    const box = document.getElementById('verifyOut');
+    box.innerHTML = '<p class="empty">正在跑判分器（不调模型）…</p>';
+    let d;
+    try{
+      d = await api('/api/datasets/verify', {method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({product, stage, dataset_id: did, ...modelCfg(), model_api_keys:roleKeys()})});
+    }catch(e){ box.innerHTML = `<div class="warn">${esc(e.message)}</div>`; return; }
+    if(!d.supported){
+      box.innerHTML = `<div class="warn">这套题用的评分器 <b>${esc(d.grader)}</b> 还没有基线定义。${esc(d.reason)}</div>`;
+      return;
+    }
+    const m = k => d.baselines.find(b=>b.key===k)?.metrics || {};
+    const gold = d.baselines.find(b=>b.key==='gold'), nul = d.baselines.find(b=>b.key==='null'),
+          alw = d.baselines.find(b=>b.key==='always');
+    const pct = v => v==null ? '—' : (v*100).toFixed(1)+'%';
+    // 列不写死：后端给了 metrics 元信息 / labels 映射就用它的 key+label，否则取各基线指标的并集，
+    // 中文名取后端 label，取不到就退回 key 本身。所有基线都没值的列整列不显示。
+    const meta = Array.isArray(d.metrics) ? d.metrics.filter(x=>x && x.key) : [];
+    const labelOf = Object.assign({}, (d.labels && typeof d.labels === 'object') ? d.labels : {});
+    meta.forEach(x=>{ labelOf[x.key] = x.label || labelOf[x.key] || x.key; });
+    const allKeys = [];
+    (meta.length ? meta.map(x=>x.key) : d.baselines.flatMap(b=>Object.keys(b.metrics||{})))
+      .forEach(k=>{ if(k && !allKeys.includes(k)) allKeys.push(k); });
+    const cols = allKeys.filter(k => d.baselines.some(b => (b.metrics||{})[k] != null));
+    const row = b => `<tr>
+      <td>${esc(b.label)}</td>
+      <td class="r"><span class="stamp ${b.pass_rate===1?'pass':''}">${b.n_pass}/${d.n_cases}</span></td>
+      ${cols.map(k=>`<td class="r ll-num">${pct((b.metrics||{})[k])}</td>`).join('')}
+      <td class="r ll-num">${b.fatal}</td></tr>`;
+    const verdictTxt = [
+      d.verdict.gold_ok
+        ? `参考答案 <b class="ok">${d.n_cases}/${d.n_cases} 全过</b> —— 判分器配置正确，题目可解。`
+        : `<b class="bad">参考答案只过了 ${pct(d.verdict.gold_rate)}</b> —— 判分器配错了，或这道题无解。先修判分器再看分数。`,
+      d.verdict.n_holes
+        ? `<b class="bad">有 ${d.verdict.n_holes} 道题「什么都不做」也能过</b>（占 ${pct(d.verdict.null_pass_rate)}）——
+           这部分分数是白拿的地板，真实 agent 只有超过它才算有本事。`
+        : `<b class="ok">没有白卷题</b> —— 每道题都必须真的做点什么才能过。`,
+    ].join('<br>');
+    box.innerHTML = `
+      <h2 style="margin-top:18px">体检结果<span class="c">${esc(d.dataset)} · ${d.n_cases} 条 · 只跑判分器</span></h2>
+      <div class="note">${verdictTxt}</div>
+      <div class="cmp"><table class="cmp">
+        <thead><tr><th>基线</th><th class="r">通过</th>
+          ${cols.map(k=>`<th class="r">${esc(labelOf[k] || k)}</th>`).join('')}
+          <th class="r">否决</th></tr></thead>
+        <tbody>${d.baselines.map(row).join('')}</tbody></table></div>
+      ${d.holes.length ? `<div class="note" style="background:rgba(194,65,45,.07)">
+        <b>白卷能过的题</b>：${d.holes.map(x=>`<span class="badge" style="color:var(--bad)">${esc(x)}</span>`).join(' ')}
+        <div style="margin-top:6px;color:var(--ink3)">这些题要么补一个「必须给出判断依据」的 gold 字段，
+        要么接受它们只是安全底线、不计入主指标。</div></div>` : ''}`;
+    box.scrollIntoView({behavior:'smooth', block:'nearest'});
+  };
+  document.querySelectorAll('[data-verify]').forEach(b=>{
+    b.onclick = e => { e.stopPropagation();
+      verify(b.dataset.verify, b.dataset.p, b.dataset.s); };
+  });
+
+  // ── 复核：有人读过这套题了吗（与 lint 分开记）──
+  const review = async (did, ok) => {
+    const box = document.getElementById('dsResult');
+    let note = '';
+    if(!ok){
+      note = (prompt('不通过的原因（改题的人只能看到这一句）：') || '').trim();
+      if(!note) return;                       // 空原因就不发请求：后端也会 400，白跑一趟
+    }
+    try{
+      await api(`/api/datasets/${did}/review`, {method:'POST',
+        headers:{'Content-Type':'application/json'}, body: JSON.stringify({reviewed: ok, note})});
+      await viewDatasets();
+    }catch(e){
+      if(box) box.innerHTML = `<div class="warn">${esc(e.message)}</div>`;
+    }
+  };
+  document.querySelectorAll('[data-rv]').forEach(b=>{
+    b.onclick = e => { e.stopPropagation(); review(b.dataset.did, b.dataset.rv==='yes'); };
+  });
+  document.querySelectorAll('[data-q]').forEach(b=>{
+    b.onclick = e => { e.stopPropagation(); S.dsFilter = b.dataset.q; viewDatasets(); };
+  });
+
+  document.getElementById('dsUp').onclick = async () => {
+    const f = document.getElementById('dsFile').files[0];
+    if(!f) return alert('请选择文件');
+    const fd = new FormData();
+    fd.append('file', f);
+    const p = document.getElementById('dsProduct').value, s = document.getElementById('dsStage').value;
+    document.getElementById('dsResult').innerHTML = '<p class="empty">上传中…</p>';
+    try{
+      const d = await api(`/api/datasets?product=${p}&stage=${s}`, {method:'POST', body:fd});
+      const result = `
+        <div class="warn" style="border-left-color:var(--ok)">
+          上传成功：<b class="num">${d.n_cases}</b> 条用例。
+          ${d.n_problems ? `<br><b class="bad">发现 ${d.n_problems} 处标注问题</b>：<br>${d.problems.map(esc).join('<br>')}` : '标注完整。'}
+        </div>`;
+      await viewDatasets();
+      const resultBox = document.getElementById('dsResult');
+      if (resultBox) resultBox.innerHTML = result;
+    }catch(e){ document.getElementById('dsResult').innerHTML = `<div class="warn">${esc(e.message)}</div>`; }
+  };
+
+  v.querySelectorAll('tr[data-id]').forEach(tr=>tr.onclick = async ()=>{
+    const d = await api('/api/datasets/'+tr.dataset.id);
+    const strata = d.strata && Object.keys(d.strata).length
+      ? Object.entries(d.strata).map(([k,n])=>`${k} ${n}`).join(' · ') : '未分层';
+    document.getElementById('dsDetail').innerHTML = `
+      <h2>用例明细<span class="c">${esc(d.meta.name)} · ${d.cases.length} 条</span></h2>
+      <div class="note">分层：${esc(strata)}</div>
+      <table><thead><tr><th>#</th><th>ID</th><th>分层</th><th>gold 标注</th></tr></thead>
+      <tbody>${d.cases.slice(0,60).map((c,i)=>`<tr>
+        <td class="num" style="color:var(--ink3)">${i+1}</td><td class="num">${esc(c.id)}</td>
+        <td style="color:var(--ink3)">${esc(c.stratum||'-')}</td>
+        <td><pre style="margin:0">${esc(JSON.stringify(c.gold).slice(0,180))}</pre></td>
+      </tr>`).join('')}</tbody></table>`;
+    document.getElementById('dsDetail').scrollIntoView({behavior:'smooth'});
+  });
+}
+
+/* ─────────── Prompt ─────────── */
+async function viewPrompts(){
+  const v = document.getElementById('view');
+  S.prompts = await api('/api/prompts');
+  v.innerHTML = `
+    <h2>新建版本<span class="c">改 prompt 是唯一应该一次只改一个的变量</span></h2>
+    <div class="row">
+      <div><label>产品</label><select id="pp"><option value="standalone_model">独立模型评测（不关联产品）</option><option value="standalone_agent">独立 Agent 评测（不关联产品）</option>
+        ${S.products.map(p=>`<option value="${p.product}">${esc(p.name)}</option>`).join('')}</select></div>
+      <div><label>环节</label><select id="ps"></select></div>
+    </div>
+    <div class="row">
+      <div><label>版本号（如 v2-调整规则）</label><input id="pver" placeholder="v1"></div>
+      <div><label>备注（这次改了什么）</label><input id="pnote" placeholder="调整输出约束"></div>
+    </div>
+    <label>模板（必须含 {input} 或 {raw}，否则模型看不到数据）</label>
+    <textarea id="ptpl" placeholder="你是一个专业助手……&#10;&#10;【数据】&#10;{input}&#10;&#10;要求：……"></textarea>
+    <div class="note">
+      可用占位符：<code>{input}</code> 整个输入对象的 JSON、<code>{raw}</code> 输入里的原始文本字段、
+      <code>{turns}</code> 多轮对话的用户发言、以及 input 里任意一级字段名（如 <code>{item}</code>）。
+    </div>
+    <button class="act" id="pSave">保存版本</button>
+    <div id="pMsg"></div>
+    <h2>已有版本<span class="c">${S.prompts.length}</span></h2>
+    <table><thead><tr><th>版本</th><th>产品/环节</th><th>备注</th><th class="r">时间</th></tr></thead>
+    <tbody>${S.prompts.map(p=>`<tr><td class="num">${esc(p.version)}</td>
+      <td style="color:var(--ink3)">${p.product==='standalone_model'?'独立模型评测':p.product==='standalone_agent'?'独立 Agent 评测':esc(p.product)} / ${esc(p.stage)}</td>
+      <td>${esc(p.note||'')}</td><td class="r num" style="color:var(--ink3)">${esc(p.created_at)}</td></tr>`)
+      .join('') || '<tr><td colspan="4" class="empty">还没有自定义版本。不建版本也能跑，会使用代码里的默认 prompt。</td></tr>'}</tbody></table>`;
+
+  const fill = () => {
+    const key = document.getElementById('pp').value;
+    if (key === 'standalone_model' || key === 'standalone_agent') {
+      const st = key === 'standalone_model' ? 'model' : 'agent';
+      document.getElementById('ps').innerHTML = `<option value="${st}">${st}（${key === 'standalone_model'?'独立模型评测':'独立 Agent 评测'}）</option>`;
+      return;
+    }
+    const p = S.products.find(x=>x.product===key);
+    document.getElementById('ps').innerHTML = (p && p.stages || []).map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('');
+  };
+  document.getElementById('pp').onchange = fill; fill();
+
+  document.getElementById('pSave').onclick = async ()=>{
+    if(!document.getElementById('ptpl').value.trim()) return alert('模板不能为空');
+    try{
+      await api('/api/prompts', {method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({product:document.getElementById('pp').value, stage:document.getElementById('ps').value,
+          version:document.getElementById('pver').value || 'v1',
+          note:document.getElementById('pnote').value, template:document.getElementById('ptpl').value})});
+      viewPrompts();
+    }catch(e){ document.getElementById('pMsg').innerHTML = `<div class="warn">${esc(e.message)}</div>`; }
+  };
+}
+
+/* ─────────── 产品界面评测 ─────────── */
+function viewProductUI(){
+  const v = document.getElementById('view');
+  v.innerHTML = `
+    <div class="note">在隔离浏览器中打开页面，按顺序执行操作和检查。失败后停止；每次运行使用新会话。仅测试可信页面，执行器需要访问目标地址，截图可能包含敏感信息。</div>
+    <label for="uiUrl">页面地址</label>
+    <input id="uiUrl" type="url" placeholder="https://example.com/" autocomplete="url">
+    <h2>测试步骤<span class="c">按顺序执行，最多 100 步</span></h2>
+    <div id="uiSteps"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin:14px 0">
+      <button class="ghost" id="uiAdd" type="button">＋ 添加步骤</button>
+      <button class="ghost" id="uiExample" type="button">加载简单示例</button>
+    </div>
+    <div class="note">简单示例使用当前平台首页：点击「总览」、检查标题文字、截图。运行前请确认服务端浏览器能够访问该地址；示例不会修改数据。</div>
+    <button class="act" id="uiGo" type="button">运行界面测试</button>
+    <div id="uiMsg" role="status" aria-live="polite"></div>
+    <div id="uiResults"></div>`;
+  const stepsEl = v.querySelector('#uiSteps');
+  const options = [['click','点击元素'],['fill','填写文本'],['check_text','检查文本包含'],['check_button','检查按钮状态'],['screenshot','页面截图']];
+  function addStep(step={action:'click',selector:''}){
+    if(stepsEl.children.length >= 100) return;
+    const row = document.createElement('div');
+    row.className='verbox';
+    row.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b data-number></b><div><button type="button" class="ghost mini" data-up aria-label="上移步骤">↑</button> <button type="button" class="ghost mini" data-down aria-label="下移步骤">↓</button> <button type="button" class="ghost mini" data-remove>删除</button></div></div>
+      <label>操作</label><select data-action>${options.map(([value,label])=>`<option value="${value}">${label}</option>`).join('')}</select>
+      <div data-selector-box><label>元素定位表达式</label><input data-selector placeholder="例如 #submit 或 button.submit"></div>
+      <div data-value-box><label data-value-label>文本</label><input data-value></div>
+      <div data-enabled-box><label>期望按钮状态</label><select data-enabled><option value="true">可用</option><option value="false">禁用</option></select></div>`;
+    row.querySelector('[data-action]').value=step.action;
+    row.querySelector('[data-selector]').value=step.selector || '';
+    row.querySelector('[data-value]').value=step.action==='check_text' ? (step.text ?? '') : (step.value ?? '');
+    row.querySelector('[data-enabled]').value=String(step.enabled ?? true);
+    const update=()=>{
+      const a=row.querySelector('[data-action]').value;
+      row.querySelector('[data-selector-box]').hidden=a==='screenshot';
+      row.querySelector('[data-value-box]').hidden=!['fill','check_text'].includes(a);
+      row.querySelector('[data-enabled-box]').hidden=a!=='check_button';
+      row.querySelector('[data-value-label]').textContent=a==='fill'?'填写内容':'预期包含的文本';
+    };
+    row.querySelector('[data-action]').onchange=update;
+    row.querySelector('[data-remove]').onclick=()=>{row.remove();renumber();};
+    row.querySelector('[data-up]').onclick=()=>{if(row.previousElementSibling) stepsEl.insertBefore(row,row.previousElementSibling);renumber();};
+    row.querySelector('[data-down]').onclick=()=>{if(row.nextElementSibling) stepsEl.insertBefore(row.nextElementSibling,row);renumber();};
+    stepsEl.appendChild(row); update(); renumber();
+  }
+  function renumber(){
+    [...stepsEl.children].forEach((row,i)=>{
+      row.querySelector('[data-number]').textContent='步骤 '+(i+1);
+      row.querySelector('[data-up]').disabled=i===0;
+      row.querySelector('[data-down]').disabled=i===stepsEl.children.length-1;
+    });
+    v.querySelector('#uiAdd').disabled=stepsEl.children.length>=100;
+  }
+  v.querySelector('#uiAdd').onclick=()=>addStep();
+  v.querySelector('#uiExample').onclick=()=>{
+    v.querySelector('#uiUrl').value=new URL('/',location.href).href;
+    stepsEl.replaceChildren();
+    addStep({action:'click',selector:'#nav button[data-v="overview"]'});
+    addStep({action:'check_text',selector:'#title',text:'总览'});
+    addStep({action:'screenshot'});
+  };
+  addStep();
+  v.querySelector('#uiGo').onclick=async ()=>{
+    const msg=v.querySelector('#uiMsg'), out=v.querySelector('#uiResults'), button=v.querySelector('#uiGo');
+    let url;
+    try {
+      url=new URL(v.querySelector('#uiUrl').value.trim());
+      if(!['http:','https:'].includes(url.protocol) || url.username || url.password) throw Error();
+    } catch(e) { msg.innerHTML='<div class="warn">请输入不含账号密码的 HTTP(S) 页面地址。</div>'; return; }
+    const steps=[];
+    for(const [i,row] of [...stepsEl.children].entries()){
+      const action=row.querySelector('[data-action]').value;
+      const selector=row.querySelector('[data-selector]').value.trim();
+      if(action!=='screenshot' && !selector){msg.innerHTML=`<div class="warn">第 ${i+1} 步需要填写元素定位表达式。</div>`;return;}
+      const step={action};
+      if(action!=='screenshot') step.selector=selector;
+      if(action==='fill') step.value=row.querySelector('[data-value]').value;
+      if(action==='check_text') step.text=row.querySelector('[data-value]').value;
+      if(action==='check_button') step.enabled=row.querySelector('[data-enabled]').value==='true';
+      steps.push(step);
+    }
+    if(!steps.length){msg.innerHTML='<div class="warn">请至少添加一个测试步骤。</div>';return;}
+    button.disabled=true; msg.innerHTML='<p class="empty">正在运行界面测试，请稍候…</p>'; out.innerHTML='';
+    try {
+      const d=await api('/api/product-ui/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:url.href,steps})});
+      if(!d || typeof d.ok!=='boolean' || !Array.isArray(d.steps)) throw Error('接口返回格式不符合约定');
+      const error=d.error;
+      const errText=error ? `${error.code||'error'}：${error.message||''}${Number.isInteger(error.step_index)?'（步骤 '+(error.step_index+1)+'）':''}` : '';
+      msg.innerHTML=`<div class="warn" ${d.ok?'style="border-left-color:var(--ok)"':''}><b>${d.ok?'测试通过':'测试未通过'}</b> · 总耗时 ${esc(d.elapsed_ms ?? '—')} ms${errText?'<br>'+esc(errText):''}</div>`;
+      out.innerHTML='<h2>逐步结果</h2>'+(d.steps.length ? d.steps.map((r,i)=>{
+        const index=Number.isInteger(r.index)?r.index:i;
+        const label=options.find(([a])=>a===r.action)?.[1] || r.action || '未知操作';
+        const actual=Object.prototype.hasOwnProperty.call(r,'actual')?`<div>实际结果：<pre>${esc(typeof r.actual==='string'?r.actual:JSON.stringify(r.actual))}</pre></div>`:'';
+        const image=typeof r.png_base64==='string' && /^[A-Za-z0-9+/=\s]+$/.test(r.png_base64) ? `<img alt="步骤 ${index+1} 截图" style="display:block;max-width:100%;height:auto;margin-top:10px;border:1px solid var(--line2)" src="data:image/png;base64,${r.png_base64.replace(/\s/g,'')}">` : '';
+        return `<div class="verbox"><b>步骤 ${index+1} · ${esc(label)}</b> <span class="stamp ${r.ok?'pass':''}">${r.ok?'通过':'失败'}</span> <span>${esc(r.elapsed_ms ?? '—')} ms</span>${actual}${image}</div>`;
+      }).join(''):'<p class="empty">没有已执行的步骤。</p>')+(d.steps.length<steps.length?`<p class="note">剩余 ${steps.length-d.steps.length} 步未执行。</p>`:'');
+    } catch(e) { msg.innerHTML=`<div class="warn">请求失败：${esc(e.message)}。请确认产品界面接口已接入并可访问。</div>`; }
+    finally {button.disabled=false;}
+  };
+}
+
+/* ─────────── 运行 ─────────── */
+async function viewRun(path){
+  path = path || (S.view==='agentRun' ? 'agent' : S.view==='uiRun' ? 'ui' : 'model');
+  const v = document.getElementById('view');
+  v.innerHTML = '<p class="empty">正在加载评测配置…</p>';
+  try {
+    S.datasets = await api('/api/datasets');
+    S.prompts = await api('/api/prompts');
+  } catch(e) {
+    if (['modelRun','agentRun','run'].includes(S.view)) v.innerHTML = `<div class="warn">加载评测配置失败：${esc(e.message)}</div>`;
+    return;
+  }
+  // 已保存的模型角色（含 target）。没有它，评测页读不到「模型与API配置」里存过的被测模型。
+  try { S.roles = (await api('/api/models')).roles || []; }
+  catch(e) {
+    S.roles = [];
+    if (['modelRun','agentRun','run'].includes(S.view))
+      v.innerHTML = `<div class="warn">读取模型角色失败（${esc(e.message)}），将只能手工填写模型名称和地址。</div>`;
+  }
+  // 评分器目录：接口返回的每一项都要完整列出来（label + key）。
+  // 兼容三种返回形状：数组 / {graders:[...]} / 纯字符串数组。
+  let graders = [], graderErr = '';
+  try {
+    const data = await api('/api/graders');
+    const list = Array.isArray(data) ? data : (data && Array.isArray(data.graders) ? data.graders : []);
+    graders = list.map(g => (typeof g === 'string' ? {key:g, label:g} : (g || {})))
+                  .filter(g => g && (g.key || g.real));
+  } catch(e) { graderErr = e.message || '请求失败'; }
+  const gKey = g => g.key || g.real;                 // 提交给后端的名字（后端两种都认）
+  const gLabel = g => g.label || gKey(g);
+  if (!['modelRun','agentRun','run'].includes(S.view) || (path==='model' && S.view==='agentRun') || (path==='agent' && S.view==='modelRun')) return;
+  const mc0 = modelCfg();
+  const modelKeyReady = !!mc0.api_key;
+  const roleRows = (S.roles || []).filter(r => r && r.role && (r.model || r.base_url));
+  const roleLabel = r => ({target:'被测模型', judge:'评委 judge', auditor:'审计 auditor', generator:'造题 generator'}[r.role] || r.role);
+  // 设置页写过模型 → 以设置页为准；只有角色卡有 → 直接选中 target，别让用户以为什么都没配。
+  S.pickRole = mc0.source === 'role' ? 'target' : '';
+  const srcText = mc0.source === 'role'
+    ? `当前取自「模型与API配置」里保存的被测模型（${esc(mc0.vendor||'未填厂商')}）`
+    : mc0.source === 'settings'
+      ? '当前取自「设置」页的模型配置'
+      : '还没有可用的被测模型配置。可到「模型与API配置」配 target，或到「设置」填模型与 Key。';
+  const keyText = mc0.key_source === 'role' ? 'Key 用该模型在浏览器保存的本地 Key'
+    : mc0.key_source === 'settings' ? 'Key 取自「设置」页' : '未找到 API Key';
+  v.innerHTML = `
+    ${!modelKeyReady && path==='model' ? `<div class="warn">浏览器尚未保存被测模型 API Key。可先在「模型与API配置」给 target 保存本地 Key、或在「设置」页填写，也可勾选「本地仿真」先验链路。</div>` : ''}
+    <h2>评测路径<span class="c">${path==='model'?'模型':path==='agent'?'Agent':'产品界面'}</span></h2>
+    <div class="note">${path==='model'?'通过模型 API 评测 Prompt 与模型输出。':'通过 HTTP 接口评测 Agent 的输入与最终输出；工具轨迹和多轮过程需后端支持。'}</div>
+    <label>执行目标</label>
+    <select id="rTarget"><option value="model" ${path==='model'?'selected':''}>模型 API</option><option value="http" ${path!=='model'?'selected':''}>HTTP 接口（仅输出评测）</option></select>
+
+    <div id="modelBox">
+      <label>已保存的被测模型<span class="c">来自「模型与API配置」</span></label>
+      <select id="rModelPick">
+        <option value="">手动填写（用下面输入框和设置页地址）</option>
+        ${roleRows.map(r=>`<option value="${esc(r.role)}" ${S.pickRole===r.role?'selected':''}>${esc(roleLabel(r))} · ${esc(r.vendor||'—')} / ${esc(r.model||'—')}${r.adapter==='mock'?'（mock 仿真）':''}</option>`).join('')}
+      </select>
+      <div class="note" id="modelSrcNote">${srcText} · ${keyText}</div>
+      <div class="row">
+        <div><label>模型（可改；选上面的角色卡会自动带出）</label><input id="rModel" value="${esc(mc0.model || '')}" placeholder="未配置，例如 gpt-4o-mini"></div>
+        <div><label>Prompt 版本（留空 = 通用默认 prompt）</label><select id="rPrompt"><option value="">通用默认</option>
+          ${S.prompts.map(p=>`<option value="${p.id}">${esc(p.version)} · ${p.product==='standalone_model'?'独立模型':p.product==='standalone_agent'?'独立 Agent':esc(p.product)}/${esc(p.stage)}</option>`).join('')}</select></div>
+      </div>
+      <div class="note" id="modelAddrNote">模型 API 地址：${esc(mc0.base_url || '未设置')}。实际连通性要在运行或探测时才知道，「有 Key」不等于「能连通」。</div>
+    </div>
+
+    <div id="httpBox" style="display:none">
+      <div class="row">
+        <div><label>你的接口地址</label><input id="tUrl" value="${esc(productCfg().url)}" placeholder="http://localhost:5000/api/advise"></div>
+        <div><label>方法</label><select id="tMethod"><option>POST</option><option>GET</option></select></div>
+      </div>
+      <div class="row">
+        <div><label>响应字段路径（从返回 JSON 里取哪一段来判分）</label>
+          <input id="tPath" value="${esc(productCfg().response_path)}" placeholder="data.advice 或 result.0.text；留空=整个响应"></div>
+        <div><label>超时（秒）</label><input id="tTimeout" type="number" value="${esc(productCfg().timeout)}"></div>
+      </div>
+      <label>请求体模板（把评测集字段映射成你接口要的格式；留空 = 原样发送 input）</label>
+      <textarea id="tBody" style="min-height:110px" placeholder='{"question":"{question}"}'>${esc(loadCfg().product_body_text || '')}</textarea>
+      <div class="note">
+        占位符：<code>{question}</code> 这类取自评测集的 <code>input</code> 字段，
+        <code>{input}</code> 表示整个 input 对象。原样保留类型（对象、数组都能直接放）。
+      </div>
+      <div style="display:flex;gap:10px;margin-top:12px">
+        <button class="ghost" id="tProbe">测试连通性（用第一条用例打一次）</button>
+      </div>
+      <div id="probeOut"></div>
+    </div>
+
+    <h2>评测范围<span class="c">独立评测无需接入产品</span></h2>
+    ${path==='model' ? '<label>评测方式</label><select id="rScope"><option value="standalone_model">独立模型评测（不关联产品）</option><option value="product">产品环节评测</option></select>'
+      : path==='agent' ? '<label>评测方式</label><select id="rScope"><option value="standalone_agent">独立 Agent 评测（直接打接口）</option><option value="product">产品环节评测</option></select>' : ''}
+    <h2>产品与环节<span class="c">只在「产品环节评测」时需要</span></h2>
+    <div class="row">
+      <div><label>产品</label><select id="rProduct">
+        ${S.products.map(p=>`<option value="${p.product}">${esc(p.name)}</option>`).join('')}</select></div>
+      <div><label>环节</label><select id="rStage"></select></div>
+    </div>
+
+    <label>评分器</label><select id="rGrader"><option value="">使用环节默认评分器</option>${graders.map(g=>`<option value="${esc(gKey(g))}">${esc(gLabel(g)===gKey(g) ? gKey(g) : gLabel(g)+' · '+gKey(g))}</option>`).join('')}<option value="tool_call_rule+trajectory_rule">工具轨迹组合 · tool_call_rule+trajectory_rule</option>
+    <option value="__custom__">自定义评分器名称或组合</option></select>
+    <input id="rGraderCustom" placeholder="如 tool_call_rule+trajectory_rule" style="display:none;margin-top:8px">
+    <div class="note">${graders.length
+      ? `共 ${graders.length} 个可用评分器。留空使用环节默认值；单次评测和双跑都用这里选的评分器。挂多个评分器用 <code>+</code> 连接（如 <code>tool_call_rule+trajectory_rule</code>）。`
+      : `评分器清单读取失败（${esc(graderErr || '接口无返回')}），此时只能用环节默认评分器。可直接填写自定义评分器名称重试。`}</div>
+    <h2>范围</h2>
+    <div class="row">
+      <div><label>评测集（留空 = 用项目自带）</label><select id="rDs"><option value="">默认</option>
+        ${S.datasets.map(d=>`<option value="${d.id}">${esc(d.name)} · ${d.n_cases}条</option>`).join('')}</select></div>
+      <div><label>限制条数（0 = 全部）</label><input id="rLimit" type="number" value="0"></div>
+    </div>
+    <div class="row">
+      <div><label>每道题跑几遍</label>
+        <select id="rRepeat"><option value="1">1 遍（快，但分数会抖）</option>
+          <option value="3" selected>3 遍（推荐：能看出稳不稳）</option>
+          <option value="5">5 遍（更稳，成本 ×5）</option></select></div>
+      <div style="display:flex;align-items:flex-end;padding-bottom:4px">
+        <div class="note" style="margin:0;flex:1;font-size:14.4px">
+          同一道题跑 N 遍：判定要求 <b>N 次全对</b>（pass^N），另给「至少对一次」（pass@N）。
+          改一句 prompt 涨的分是真变好还是多对了一道，看这个差别。
+        </div>
+      </div>
+    </div>
+    <label style="text-transform:none;letter-spacing:0;font-size:15px;color:var(--ink2)" id="mockRow">
+      <input type="checkbox" id="rMock" style="width:auto;margin-right:6px">本地仿真（不调 API；Agent 示例可回放用例中的模拟输出和轨迹，不能代表真实能力）
+    </label>
+    <h2>版本记录<span class="c">自动采集不到的，靠这里补</span></h2>
+    <div class="row">
+      <div><label>版本标签（台账里的行名）</label><input id="vLabel" placeholder="R3-调整规则"></div>
+      <div><label>整体备注（可选）</label><input id="vNote" placeholder="这一轮想验证什么"></div>
+    </div>
+
+    <div class="verbox p">
+      <div class="verhead">prompt 侧</div>
+      <div class="row">
+        <div><label>版本号</label><input id="vPrompt" placeholder="p-v2"></div>
+        <div><label>备注：这次 prompt 改了什么</label><input id="vPromptNote" placeholder="调整输出约束"></div>
+      </div>
+    </div>
+
+    <div class="verbox d">
+      <div class="verhead">产品侧</div>
+      <div class="row">
+        <div><label>版本号（留空 = 自动读 git sha）</label><input id="vProduct" placeholder="留空自动读取"></div>
+        <div><label>备注：这次产品改了什么</label><input id="vProductNote" placeholder="调整了业务规则"></div>
+      </div>
+    </div>
+    <div class="note">
+      两侧分开填，台账里才能一眼看出「这次动的是哪一边」。备注会显示在台账行内，
+      特殊情况（比如换了数据集、临时降级）写在这里，比事后回忆可靠。
+    </div>
+
+    <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="act" id="rGo">开始评测</button>
+      <button class="act" id="rDual" style="display:none;background:var(--accent)">双跑：基线 + 产品 + 对照</button>
+    </div>
+    <div id="dualHint" style="display:none" class="note">
+      双跑会用同一个评测集跑两遍：一遍只喂模型（基线），一遍打你的产品接口，然后生成第三份<b>对照诊断</b>，
+      直接告诉你差异该改 prompt 还是改产品代码。
+    </div>
+    <div id="rMsg"></div>
+    <div id="rOut"></div>`;
+
+  // 从总览点运行 id 过来：S.cur 就是那次 run，直接把它的报表贴在顶上
+  if(S.cur){
+    v.insertAdjacentHTML('afterbegin', `
+      <h2>从总览跳过来的运行<span class="c">${esc(S.cur)}</span></h2>
+      <div class="note" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <span>这是该环节最近一次运行的报表。下面照常可以重新发起一次评测。</span>
+        <button class="ghost mini" id="curClose" style="margin-left:auto">关掉这份报表</button>
+      </div>
+      <iframe src="/api/runs/${encodeURIComponent(S.cur)}/report"></iframe>`);
+    const cc = document.getElementById('curClose');
+    if(cc) cc.onclick = ()=>{ S.cur = null; viewRun(); };
+  }
+
+  document.getElementById('tMethod').value = productCfg().method;
+  const tog = () => {
+    // 评测方式决定执行目标：独立模型→模型 API；独立 Agent→HTTP 接口；产品环节→两者都可选。
+    const scope = document.getElementById('rScope');
+    const target = document.getElementById('rTarget');
+    if (scope) {
+      if (scope.value === 'standalone_model') target.value = 'model';
+      if (scope.value === 'standalone_agent') target.value = 'http';
+      target.disabled = scope.value.indexOf('standalone') === 0;   // 独立模式下目标由方式决定，别让人改岔
+    }
+    const isHttp = target.value === 'http';
+    document.getElementById('httpBox').style.display = isHttp ? 'block' : 'none';
+    document.getElementById('modelBox').style.display = isHttp ? 'none' : 'block';
+    document.getElementById('mockRow').style.display = 'block';
+    document.getElementById('rDual').style.display = isHttp ? 'inline-block' : 'none';
+    document.getElementById('dualHint').style.display = isHttp ? 'block' : 'none';
+  };
+  document.getElementById('rTarget').onchange = tog;
+  const scopeSel = document.getElementById('rScope');
+  if (scopeSel) scopeSel.onchange = tog;
+  tog();
+
+  const tgt = () => {
+    const body = document.getElementById('tBody').value.trim();
+    let bt = null;
+    if (body) { try { bt = JSON.parse(body); } catch(e){ throw new Error('请求体模板不是合法 JSON：'+e.message); } }
+    return {url: document.getElementById('tUrl').value.trim(),
+            method: document.getElementById('tMethod').value,
+            response_path: document.getElementById('tPath').value.trim(),
+            timeout: parseInt(document.getElementById('tTimeout').value)||30,
+            body_template: bt, api_key: productCfg().api_key};
+  };
+  const val = id => (document.getElementById(id)||{}).value || '';
+  // 实际提交的模型配置：选了角色卡就用角色卡的 base_url + 该角色的本地 Key；
+  // 没选则用设置页。两者混用时以「有值的一方」为准，避免出现「模型填了、地址/Key 却是空的」。
+  const pickRole = () => (S.pickRole ? (S.roles||[]).find(r=>r.role===S.pickRole) : null);
+  const runModelCfg = () => {
+    const mc = modelCfg(), r = pickRole();
+    if (!r) return mc;
+    const rk = roleKeys()[r.role] || '';
+    return {
+      api_key: rk || mc.api_key,
+      base_url: (r.base_url||'').trim() || mc.base_url,
+      model: val('rModel').trim() || r.model || mc.model,
+      vendor: (r.vendor||'').trim() || mc.vendor,
+      source: 'role', key_source: rk ? 'role' : mc.key_source,
+    };
+  };
+  const pickEl = document.getElementById('rModelPick');
+  if (pickEl) pickEl.onchange = () => {
+    S.pickRole = pickEl.value || '';
+    const r = pickRole();
+    if (r) document.getElementById('rModel').value = r.model || '';
+    const c = runModelCfg();
+    document.getElementById('modelAddrNote').textContent =
+      `模型 API 地址：${c.base_url || '未设置'}。实际连通性要在运行或探测时才知道，「有 Key」不等于「能连通」。`;
+    document.getElementById('modelSrcNote').textContent = r
+      ? `当前用「${(roleLabel(r))}」的已保存配置（${r.vendor||'—'} / ${r.model||'—'}）；Key：${keysText(c)}`
+      : `当前用手工填写 + 设置页配置；Key：${keysText(c)}`;
+  };
+  function keysText(c){
+    return c.key_source === 'role' ? '已保存的角色 Key'
+      : c.key_source === 'settings' ? '设置页 Key' : '未找到（真实调用会被拒绝）';
+  }
+  const grader = () => val('rGrader') === '__custom__' ? val('rGraderCustom').trim() : val('rGrader');
+  document.getElementById('rGrader').onchange = () => { document.getElementById('rGraderCustom').style.display = val('rGrader') === '__custom__' ? 'block' : 'none'; };
+  const ver = () => ({
+    label: val('vLabel'),
+    prompt_ver: val('vPrompt'),
+    prompt_note: val('vPromptNote'),
+    product_ver: val('vProduct'),
+    product_note: val('vProductNote'),
+    change_note: val('vNote'),
+  });
+  const base = () => ({
+    api_key: runModelCfg().api_key, base_url: runModelCfg().base_url,
+    product: document.getElementById('rProduct').value,
+    stage: document.getElementById('rStage').value,
+    dataset_id: document.getElementById('rDs').value || null,
+    repeat: parseInt((document.getElementById('rRepeat')||{}).value) || 1,
+    ...(grader() ? {grader: grader()} : {}),
+  });
+
+  document.getElementById('tProbe').onclick = async ()=>{
+    const out = document.getElementById('probeOut');
+    let t; try { t = tgt(); } catch(e){ return out.innerHTML = `<div class="warn">${esc(e.message)}</div>`; }
+    if(!t.url) return out.innerHTML = '<div class="warn">请先填接口地址</div>';
+    out.innerHTML = '<p class="empty">正在请求…</p>';
+    try{
+      const d = await api('/api/probe', {method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({...base(), target:t})});
+      if(d.ok){
+        out.innerHTML = `<div class="warn" style="border-left-color:var(--ok)">
+          连通成功 · 用例 ${esc(d.case_id)} · <b class="num">${d.latency_ms}ms</b></div>
+          <label>发出去的请求体</label><pre>${esc(JSON.stringify(d.sent,null,1))}</pre>
+          <label>取到的输出（交给判分器，${d.extracted_len} 字）</label><pre>${esc(d.extracted)}</pre>`;
+      }else{
+        out.innerHTML = `<div class="warn"><b>请求失败</b>：${esc(d.error)}</div>
+          <label>发出去的请求体</label><pre>${esc(JSON.stringify(d.sent,null,1))}</pre>
+          <div class="note">常见原因：接口没启动、端口不对、字段名和你的入参不一致、响应字段路径写错。</div>`;
+      }
+    }catch(e){ out.innerHTML = `<div class="warn">${esc(e.message)}</div>`; }
+  };
+
+  const fill = () => {
+    const dv = document.getElementById('rProduct').value;
+    const p = S.products.find(x=>x.product===dv);
+    const st = document.getElementById('rStage');
+    const previousStage = st.value;
+    st.innerHTML = (p?.stages || []).map(ss=>
+      `<option value="${ss.id}">${esc(ss.name)} · ${esc(ss.task_type)}</option>`).join('');
+    if ([...st.options].some(o=>o.value===previousStage)) st.value=previousStage;
+    // prompt 下拉只留当前产品/环节的，避免选错别家的模板；
+    // 没有产品（独立模型评测）时列出独立模型自己的模板，别把列表清空。
+    const rp = document.getElementById('rPrompt');
+    if(rp){
+      const sid = st.value;
+      const prev = rp.value;
+      const standalone = !dv || dv === 'standalone_model' || dv === 'standalone_agent';
+      const mine = standalone
+        ? S.prompts.filter(x=>x.product==='standalone_model' || x.product==='standalone_agent')
+        : S.prompts.filter(x=>x.product===dv && x.stage===sid);
+      rp.innerHTML = `<option value="">${standalone?'通用默认':'默认'}</option>` + mine.map(x=>
+        `<option value="${x.id}">${esc(x.version)}${standalone?' · 独立模型':''}</option>`).join('');
+      if ([...rp.options].some(o=>o.value===prev)) rp.value = prev;
+    }
+  };
+  // 默认使用列表中的第一个产品。
+  document.getElementById('rProduct').onchange = fill;
+  document.getElementById('rStage').onchange = fill;
+  const scopeEl = document.getElementById('rScope');
+  if(scopeEl) scopeEl.onchange = fill;
+  fill();
+
+  document.getElementById('rDual').onclick = async ()=>{
+    if(val('rGrader') === '__custom__' && !grader()) return document.getElementById('rMsg').innerHTML = '<div class="warn">请填写自定义评分器名称或组合。</div>';
+    let t; try { t = tgt(); } catch(e){ return document.getElementById('rMsg').innerHTML = `<div class="warn">${esc(e.message)}</div>`; }
+    if(!t.url) return document.getElementById('rMsg').innerHTML = '<div class="warn">请先填接口地址</div>';
+    const model = val('rModel').trim();
+    if(!model && runModelCfg().api_key) return document.getElementById('rMsg').innerHTML = '<div class="warn">双跑使用模型基线时，请先填写模型名称（或在上面选一个已保存的被测模型）。</div>';
+    // base() 只带产品/环节/数据集/重复次数/评分器；prompt 版本和限制条数必须单独补上，
+    // 否则用户在页面上选的 Prompt 版本、填的限制条数到了双跑里会被后端默认值覆盖，报表数字与设定不符。
+    const payload = {...base(), model_api_keys:roleKeys(), target: t,
+      prompt_id: document.getElementById('rPrompt').value || null,
+      limit: parseInt(document.getElementById('rLimit').value) || null,
+      ...(model ? {model} : {}), allow_mock_baseline: true, version: ver()};
+    const msg = document.getElementById('rMsg');
+    try{
+      const {job_id} = await api('/api/dual', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+      msg.innerHTML = '<p class="empty">准备中…</p>';
+      document.getElementById('rOut').innerHTML = '';
+      clearInterval(S.poll);
+      S.poll = setInterval(async ()=>{
+        const j = await api('/api/jobs/'+job_id);
+        if(j.status==='running'){
+          msg.innerHTML = `<p class="empty">${esc(j.step||'运行中')}… ${j.elapsed}s</p>`;
+        }else if(j.status==='error'){
+          clearInterval(S.poll);
+          msg.innerHTML = `<div class="warn">失败：${esc(j.error)}</div>`;
+        }else{
+          clearInterval(S.poll);
+          msg.innerHTML = `<div class="warn" style="border-left-color:var(--ok)">
+            三份报告已生成：基线 <b>${esc(j.verdict_a)}</b> · 产品 <b>${esc(j.verdict)}</b></div>
+            <div style="display:flex;gap:22px;margin:10px 0 4px">
+              ${j.reports.map(r=>`<a href="/api/runs/${encodeURIComponent(r.run)}/report" target="_blank"
+                style="font-size:15.6px;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink)">
+                ${esc(r.label)}</a>`).join('')}
+            </div>`;
+          document.getElementById('rOut').innerHTML =
+            `<h2>③ 对照诊断<span class="c">默认显示这一份</span></h2>
+             <iframe src="/api/runs/${encodeURIComponent(j.reports[2].run)}/report"></iframe>`;
+        }
+      }, 900);
+    }catch(e){ msg.innerHTML = `<div class="warn">${esc(e.message)}</div>`; }
+  };
+
+  document.getElementById('rGo').onclick = async ()=>{
+    const say = html => { document.getElementById('rMsg').innerHTML = html; };
+    if(val('rGrader') === '__custom__' && !grader()) return say('<div class="warn">请填写自定义评分器名称。</div>');
+    const isHttp = document.getElementById('rTarget').value === 'http';
+    const scopeVal = val('rScope');
+    const standalone = !!scopeVal && scopeVal.indexOf('standalone') === 0;
+    const isAgentStandalone = scopeVal === 'standalone_agent';
+    let payload = {...base(), model_api_keys:roleKeys()};
+    if (standalone) {
+      if (!payload.dataset_id || !grader()) return say(`<div class="warn">${isAgentStandalone?'独立 Agent':'独立模型'}评测请先选择评测集和评分器。</div>`);
+      payload.scope = scopeVal; delete payload.product; delete payload.stage;
+    }
+    const mock = document.getElementById('rMock').checked;
+    if(isHttp && !mock){
+      let t; try { t = tgt(); } catch(e){ return say(`<div class="warn">${esc(e.message)}</div>`); }
+      if(!t.url) return say('<div class="warn">请先填接口地址（被测 Agent 或产品的 HTTP 接口）</div>');
+      payload.target = t; payload.mock = false;
+    }else{
+      payload.model = document.getElementById('rModel').value.trim();
+      payload.prompt_id = document.getElementById('rPrompt').value || null;
+      payload.mock = mock;
+      // Agent 独立评测走 mock 时是用数据集里的 mock_trace 回放，不需要模型名。
+      if(!payload.model && !payload.mock && !isAgentStandalone) return say('<div class="warn">请先填写模型名称，或勾选本地仿真。</div>');
+    }
+    payload.limit = parseInt(document.getElementById('rLimit').value)||null;
+    payload.version = ver();
+    try{
+      const {job_id} = await api('/api/runs', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+      document.getElementById('rMsg').innerHTML = '<p class="empty">运行中…</p>';
+      clearInterval(S.poll);
+      S.poll = setInterval(async ()=>{
+        const j = await api('/api/jobs/'+job_id);
+        if(j.status==='running'){
+          document.getElementById('rMsg').innerHTML = `<p class="empty">运行中… ${j.elapsed}s</p>`;
+        }else if(j.status==='error'){
+          clearInterval(S.poll);
+          document.getElementById('rMsg').innerHTML = `<div class="warn">失败：${esc(j.error)}</div>`;
+        }else{
+          clearInterval(S.poll);
+          document.getElementById('rMsg').innerHTML = `<div class="warn" style="border-left-color:var(--ok)">
+            完成，判定 <b>${esc(j.verdict)}</b>。<a href="/api/runs/${j.run_id}/report" target="_blank">在新窗口打开完整报表</a></div>`;
+          document.getElementById('rOut').innerHTML =
+            `<h2>报表<span class="c">${esc(j.run_id)}</span></h2><iframe src="/api/runs/${j.run_id}/report"></iframe>`;
+        }
+      }, 900);
+    }catch(e){ document.getElementById('rMsg').innerHTML = `<div class="warn">${esc(e.message)}</div>`; }
+  };
+}
+
+/* ─────────── 总览（跨产品，只看「跑没跑、挂没挂」）─────────── */
+async function openRun(rid){
+  S.cur = rid;
+  location.hash = 'run/' + encodeURIComponent(rid);
+  setView('run');
+}
+
+async function viewOverview(){
+  const v = document.getElementById('view');
+  v.innerHTML = '<p class="empty">正在读总览…</p>';
+  let d;
+  try{ d = await api('/api/overview'); }
+  catch(e){ v.innerHTML = `<div class="warn">${esc(e.message)}</div>`; return; }
+  const sm = d.summary || {};
+  const prods = d.products || [];
+  const nStagesAll = sm.n_stages || 0;
+  const nRun = sm.n_run || 0;
+
+  const stageRow = (p, st) => {
+    const rate = st.pass_rate;
+    const lvl = rate==null ? '' : rate>=0.8 ? '' : rate>=0.5 ? 'mid' : 'low';
+    const bar = rate==null
+      ? '<span style="color:var(--line2)">—</span>'
+      : `<span class="ovbar"><i class="${lvl}" style="width:${Math.round(rate*100)}%"></i></span>${pct(rate)}`;
+    const verdict = !st.has_run ? '<span class="rbg">未跑过</span>'
+      : `<span class="stamp ${st.verdict==='合格'?'pass':''}">${esc(st.verdict)}</span>`;
+    const deps = (st.depends_on || []).map(id=>{
+      const up = (p.stages||[]).find(x=>x.id===id);
+      return `<span class="dep">依赖 → ${esc(up ? up.name : id)}</span>`;
+    }).join(' ');
+    const when = st.has_run
+      ? `<a href="#run/${encodeURIComponent(st.run_id)}" data-run="${esc(st.run_id)}" class="num"
+           style="font-size:13.8px;white-space:nowrap">${esc(st.run_id)}</a>
+         <div class="dl">${esc(st.when||'')}</div>`
+      : '<span style="color:var(--line2)">—</span>';
+    return `<tr>
+      <td><b style="font-family:var(--kai);font-size:15.6px">${esc(st.name)}</b>
+        ${deps ? `<div>${deps}</div>` : ''}
+        <div class="dl">${esc(st.id)}</div></td>
+      <td class="r" style="min-width:150px;padding-left:14px">${bar}
+        ${st.has_run?`<div class="dl">${st.n} 条用例</div>`:''}</td>
+      <td class="r" style="padding-left:14px">${verdict}</td>
+      <td class="r" style="min-width:190px;padding-left:14px">${when}</td>
+      <td style="padding-left:18px;min-width:180px">
+        <span style="font-family:var(--mono);font-size:12.6px;color:var(--ink3);
+          word-break:break-word;display:block;line-height:1.5">${esc(st.grader||'—')}</span></td>
+    </tr>`;
+  };
+
+  v.innerHTML = `
+    <div class="kpis">
+      <div class="kpi"><span>产品数</span><b>${sm.n_products||0}</b></div>
+      <div class="kpi"><span>环节数</span><b>${nStagesAll}</b></div>
+      <div class="kpi"><span>已跑过</span><b class="${nRun?'hi':''}">${nRun}</b></div>
+      <div class="kpi"><span>未跑过</span><b class="${sm.n_never_run?'hi':''}">${sm.n_never_run||0}</b></div>
+    </div>
+    <div class="note">
+      这里只回答「哪个环节还没跑过、哪个一直在挂、哪个产品最近没动过」，
+      <b>不排名、不给综合分</b>——指标同名不同义（都叫 precision，各任务的计算方式可能不同），
+      横向比分数是错的。结论以各产品自己的达标门为准。
+      ${nStagesAll && !nRun ? '<br><b class="bad">还没有跑过任何环节。</b>先去「运行评测」跑一次，这里才有内容。' : ''}
+    </div>
+    ${prods.length ? prods.map(p=>`
+      <h2 style="margin-top:22px">${esc(p.name)}<span class="c">${esc(p.product)} · ${(p.stages||[]).length} 个环节</span></h2>
+      ${(p.stages&&p.stages.length) ? `
+      <table><thead><tr><th>环节</th><th class="r" style="padding-left:14px">通过率</th>
+        <th class="r" style="padding-left:14px">结论</th>
+        <th class="r" style="padding-left:14px">最近一次运行</th>
+        <th style="padding-left:18px">评分器</th></tr></thead>
+      <tbody>${(p?.stages || []).map(st=>stageRow(p, st)).join('')}</tbody></table>`
+      : '<p class="empty">这个产品还没有配置环节。</p>'}`).join('')
+      : emptyProducts()}
+    <div class="endline"></div>`;
+
+  v.querySelectorAll('[data-run]').forEach(a=>{
+    a.onclick = e => { e.preventDefault(); openRun(a.dataset.run); };
+  });
+}
+
+/* ─────────── 模型角色（四个角色 + 三角互评体检）─────────── */
+const ROLE_LABEL = {target:'被测 target', judge:'评委 judge', auditor:'审计 auditor', generator:'造题 generator'};
+const roleName = k => ROLE_LABEL[k] || k;
+
+async function viewModels(){
+  const v = document.getElementById('view');
+  v.innerHTML = '<p class="empty">正在读模型角色…</p>';
+  let d;
+  try{ d = await api('/api/models'); }
+  catch(e){ v.innerHTML = `<div class="warn">${esc(e.message)}</div>`; return; }
+  S.models = d;
+  const roles = Array.isArray(d.roles) ? d.roles : [];
+
+  const card = r => `
+    <div class="verbox ${r.role==='target'?'d':'p'}" data-role="${esc(r.role)}">
+      <div class="verhead">${esc(roleName(r.role))}</div>
+      <div style="font-size:13.8px;color:var(--ink3);margin-bottom:6px">
+        厂商 <b class="num">${esc(r.vendor||'—')}</b> · 模型 <b class="num">${esc(r.model||'—')}</b>
+        ${r.adapter==='mock' ? '<span class="rbg n" style="margin-left:6px">mock 仿真 · 不出网</span>'
+                             : '<span class="rbg y" style="margin-left:6px">配置为真实调用 · 未验证连通</span>'}
+      </div>
+      <div style="margin-bottom:8px">
+        ${roleKeys()[r.role] ? '<span class="rbg y">浏览器已保存角色 Key</span>' : '<span class="rbg n">浏览器未保存角色 Key</span>'}
+        <span style="font-size:12.6px;color:var(--ink3)">仅表示本地存在，不代表有效或连通；角色调用不读取环境变量。${r.adapter==='mock'?'当前仿真不会使用 Key。':''}</span>
+        <label>浏览器本地角色 Key</label><input data-f="local_key" type="password" autocomplete="off" value="${esc(roleKeys()[r.role]||'')}">
+        <button class="ghost mini" data-key-save="${esc(r.role)}">保存本地 Key</button> <button class="ghost mini" data-key-clear="${esc(r.role)}">清除本地 Key</button>
+      </div>
+      <label>base_url</label><input data-f="base_url" value="${esc(r.base_url||'')}">
+      <div class="row" style="gap:12px">
+        <div><label>model</label><input data-f="model" value="${esc(r.model||'')}"></div>
+        <div><label>adapter</label><select data-f="adapter">
+          <option value="mock" ${r.adapter==='mock'?'selected':''}>mock（本地仿真）</option>
+          <option value="openai_compat" ${r.adapter!=='mock'?'selected':''}>openai_compat（真实调用）</option>
+        </select></div>
+      </div>
+      <label>vendor（判「是否同源」就比这个字段）</label><input data-f="vendor" value="${esc(r.vendor||'')}">
+      <div style="margin-top:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <button class="ghost mini" data-save="${esc(r.role)}">保存这张卡</button>
+        <span style="font-size:12.6px;color:var(--ink3);font-family:var(--sans)">${esc(r.note||'')}</span>
+      </div>
+    </div>`;
+
+  const LV = {ok:['✓','var(--ok)','通过'], warn:['!','#a8791a','警告'], block:['✗','var(--bad)','禁止']};
+  const indRow = x => {
+    const [ico, col, label] = LV[x.level] || ['?','var(--ink3)', x.level];
+    return `<tr>
+      <td>${esc(roleName(x.role))} <span style="color:var(--ink3)">→</span> ${esc(roleName(x.peer))}</td>
+      <td class="r" style="white-space:nowrap;padding-left:14px"><span style="font-family:var(--hand);font-size:18px;color:${col}">${ico}</span>
+        <span style="color:${col};font-size:13.8px;margin-left:5px">${esc(label)}</span></td>
+      <td style="color:var(--ink2);padding-left:20px">${esc(x.reason)}</td>
+    </tr>`;
+  };
+  const ind = d.independence || [];
+  const nBlock = ind.filter(x=>x.level==='block').length;
+  const nWarn = ind.filter(x=>x.level==='warn').length;
+
+  v.innerHTML = `
+    <div id="mMsg">${S.modelsMsg||''}</div>
+    <div class="note">
+      <b>评委必须和被测产品来自不同厂商，同一个模型评自己会宽容。</b>
+      角色及独立性关系由后端返回，保存时校验结果以后端配置为准。
+      角色 Key 明文保存在浏览器 localStorage，有同源脚本、恶意扩展和共享设备泄露风险；相关请求会发送给本服务。角色模型配置与本地 Key 分别保存。未提供 judge Key 时后端会回退至顶层模型 Key；角色 Key 不替代被测模型 Key。
+    </div>
+    <h2>角色配置<span class="c">${roles.length} 个 · 可直接改，改完点该卡片的「保存这张卡」</span></h2>
+    <div class="cards">${roles.length ? roles.map(card).join('')
+      : '<p class="empty">还没有配置任何角色。看 config/models.yaml。</p>'}</div>
+    <label style="display:flex;align-items:center;gap:6px;margin-top:16px;font-family:var(--sans);font-size:15px;color:var(--ink2)">
+      <input type="checkbox" id="mStrict" ${d.strict_vendor?'checked':''} style="width:auto">
+      严格模式：同厂商直接拒绝保存（不勾 = 同厂商只警告）。改这里会立即保存。
+    </label>
+    <h2 style="margin-top:22px">三角互评体检<span class="c">${nBlock?('有 '+nBlock+' 条禁止'):
+      nWarn?('有 '+nWarn+' 条警告'):'全部独立'}</span></h2>
+    ${ind.length ? `<table><thead><tr><th>谁 ↔ 谁</th><th class="r" style="padding-left:14px">结论</th>
+      <th style="padding-left:20px">依据（后端原话）</th></tr></thead>
+      <tbody>${ind.map(indRow).join('')}</tbody></table>`
+      : '<p class="empty">角色不全，暂时算不出独立性。请检查后端角色配置。</p>'}
+    <div class="endline"></div>`;
+
+  v.querySelectorAll('[data-key-save], [data-key-clear]').forEach(b=>{
+    b.onclick = ()=>{
+      const cardEl=b.closest('[data-role]'), role=cardEl.dataset.role;
+      const input=cardEl.querySelector('[data-f="local_key"]');
+      const keys=roleKeys(), value=input.value.trim();
+      if(b.hasAttribute('data-key-clear')) delete keys[role];
+      else if(value) keys[role]=value;
+      else return alert('请输入角色 Key，或点击清除本地 Key。');
+      try {
+        saveCfg({model_api_keys:keys});
+        if(b.hasAttribute('data-key-clear')) input.value='';
+        const status=cardEl.querySelector('[data-f="local_key"]').parentElement;
+        const keyBadge=Array.from(status.querySelectorAll('.rbg')).find(el=>el.textContent.includes('浏览器'));
+        if(keyBadge){ keyBadge.className='rbg '+(keys[role]?'y':'n'); keyBadge.textContent=keys[role]?'浏览器已保存角色 Key':'浏览器未保存角色 Key'; }
+        document.getElementById('mMsg').textContent=keys[role]?'角色 Key 已保存到本浏览器，尚未验证。':'角色 Key 已从本浏览器清除。';
+      } catch(e){ document.getElementById('mMsg').textContent='本地保存失败：'+e.message; }
+    };
+  });
+
+  // 单卡保存：只提交这张卡改过的四个字段 + 当前严格模式
+  v.querySelectorAll('[data-save]').forEach(b=>{
+    b.onclick = async ()=>{
+      const cardEl = b.closest('[data-role]');
+      const g = f => { const el = cardEl.querySelector(`[data-f="${f}"]`); return el ? el.value.trim() : ''; };
+      const roles = {};
+      roles[b.dataset.save] = {base_url:g('base_url'), model:g('model'), adapter:g('adapter'), vendor:g('vendor')};
+      const strictVal = (document.getElementById('mStrict')||{}).checked === true;
+      const msgEl = document.getElementById('mMsg');
+      msgEl.innerHTML = '<p class="empty">保存中…</p>';
+      try{
+        const r = await api('/api/models', {method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({roles, strict_vendor: strictVal})});
+        S.modelsMsg = `<div class="warn" style="border-left-color:var(--ok)">已保存
+          <b>${esc(roleName(b.dataset.save))}</b>。体检重算：${
+            (r.independence||[]).map(x=>`${esc(roleName(x.role))}↔${esc(roleName(x.peer))}
+              <b class="${x.level==='ok'?'ok':'bad'}">${esc(x.level)}</b>`).join(' · ')}</div>`;
+        viewModels();
+      }catch(e){
+        // 400 的 detail 是「同源身份冲突」，原样贴出来，不要吞；也不重渲染，保住用户刚填的值
+        msgEl.innerHTML = `<div class="warn"><b>保存被拒绝</b>（后端原话，一字未改）：<br>
+          <span style="font-family:var(--mono);font-size:14.4px;word-break:break-all">${esc(e.message)}</span>
+          <div style="margin-top:6px;color:var(--ink3);font-size:13.8px">
+            这就是「同一模型评自己」被拦下来的地方。换个厂商的模型，或把 vendor 改成本产品真实的厂商。</div></div>`;
+        S.modelsMsg = msgEl.innerHTML;
+        window.scrollTo({top:0, behavior:'smooth'});
+      }
+    };
+  });
+
+  const chk = document.getElementById('mStrict');
+  if(chk) chk.onchange = async ()=>{
+    try{
+      await api('/api/models', {method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({roles:{}, strict_vendor: chk.checked})});
+      S.modelsMsg = `<div class="warn" style="border-left-color:var(--ok)">严格模式已${chk.checked?'打开':'关闭'}。</div>`;
+      viewModels();
+    }catch(e){
+      chk.checked = !chk.checked;                       // 后端没接受，勾选状态退回去
+      document.getElementById('mMsg').innerHTML = `<div class="warn"><b>改严格模式被拒绝</b>（后端原话）：<br>
+        <span style="font-family:var(--mono);font-size:14.4px">${esc(e.message)}</span></div>`;
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+  };
+}
+
+/* ─────────── 指标台账（主界面）─────────── */
+S.sel = [];
+async function viewLedger(){
+  const v = document.getElementById('view');
+  const prods = S.products;
+  if(!S.ledProduct){
+    try{
+      const all = await api('/api/versions');
+      if(all.length){ S.ledProduct = all[0].product; S.ledStage = all[0].stage; }
+    }catch(e){}
+  }
+  const p = prods.find(x=>x.product===S.ledProduct) || prods[0];
+  if(!p || !(p.stages||[]).length){ v.innerHTML = emptyProducts(); return; }
+  const cur = p.product;
+  const st = (p.stages.find(x=>x.id===S.ledStage) || p.stages[0]).id;
+  S.ledProduct = cur; S.ledStage = st;
+  const d = await api(`/api/ledger?product=${cur}&stage=${st}`);
+  S.sel = S.sel.filter(id=>d.rows.some(r=>r.version_id===id));
+
+  const showAll = !!S.ledAll;
+  const cols = showAll ? d.metrics : (d.has_core ? d.metrics.filter(m=>m.core) : d.metrics);
+  const head = cols.map(m=>`<th class="m">${esc(m.label)}</th>`).join('');
+  const body = d.rows.map((r,i)=>{
+    const vals = cols.map(m=>{
+      const x = r.values[m.key];
+      if(x==null) return `<td class="m" style="color:var(--line2)">—</td>`;
+      // 与上一行比，给出 ▲▼（不只靠颜色）
+      let d2='';
+      if(i>0){
+        const prev = d.rows[i-1].values[m.key];
+        if(prev!=null){
+          const df=(x-prev)*100;
+          if(Math.abs(df)>=0.05){
+            const better = m.higher_better ? df>0 : df<0;
+            d2=`<span class="${better?'up':'down'}">${df>0?'▲':'▼'}${Math.abs(df).toFixed(1)}</span>`;
+          }
+        }
+      }
+      return `<td class="m"><span class="v">${pct(x)}</span>${d2?`<span class="d2">${d2}</span>`:''}</td>`;
+    }).join('');
+    const chgP = r.changed.includes('prompt'), chgD = r.changed.includes('product');
+    const mark = (hit)=> hit
+      ? `<span class="chg">改</span>`
+      : '';
+    const sel = S.sel.includes(r.version_id);
+    return `<tr class="${sel?'sel':''}" data-id="${r.version_id}">
+      <td class="fix" style="min-width:0;padding-right:4px">
+        <input type="checkbox" data-sel="${r.version_id}" ${sel?'checked':''} style="width:auto">
+      </td>
+      <td class="fix"><b>${esc(r.label)}</b>${r.repeat>1?`<span class="badge" style="margin-left:5px;color:var(--ink3);font-size:12px">×${r.repeat}</span>`:''}${!r.changed.length?'<span style="color:var(--ink3);font-size:12.6px;margin-left:6px">基线</span>':''}
+        ${(r.prompt_note||r.product_note||r.change_note)?`<span class="lnote"
+          title="${esc([r.prompt_note&&('P: '+r.prompt_note), r.product_note&&('D: '+r.product_note), r.change_note].filter(Boolean).join(' ｜ '))}">
+          ${esc([r.prompt_note, r.product_note, r.change_note].filter(Boolean).join(' · '))}</span>`:''}</td>
+      <td class="${chgP?'hit-p':''}">${esc(r.prompt_ver)}${mark(chgP)}</td>
+      <td class="${chgD?'hit-d':''}">${esc(r.product_ver)}${mark(chgD)}</td>
+      <td><span class="stamp ${r.verdict==='合格'?'pass':''}">${esc(r.verdict)}</span></td>
+      <td class="m">${r.n_fatal}</td>
+      ${vals}
+      <td><a href="/api/runs/${r.run_id}/report" target="_blank" style="font-size:13.8px">详情</a></td>
+    </tr>`;
+  }).join('');
+
+  v.innerHTML = `
+    <div class="row" style="grid-template-columns:220px 260px 1fr;align-items:end">
+      <div><label>产品</label><select id="lProduct">${prods.map(x=>`<option value="${x.product}" ${x.product===cur?'selected':''}>${esc(x.name)}</option>`).join('')}</select></div>
+      <div><label>环节</label><select id="lStage">${(p?.stages || []).map(x=>`<option value="${x.id}" ${x.id===st?'selected':''}>${esc(x.name)}</option>`).join('')}</select></div>
+      <div style="text-align:right;font-size:13.8px;color:var(--ink3);padding-bottom:6px">
+        ${d.product_repo ? `自动读取版本：<span class="num">${esc(d.auto_product_version||'读取失败')}</span>` :
+        `版本号将从「设置 → 被测产品仓库」自动读取 <button class="ghost mini" id="toRepo">去设置</button>`}
+      </div>
+    </div>
+
+    <div class="note">
+      每一行是一次评测，横向看指标。勾选任意几行可以并置对比。
+      <b>哪一列高亮，就是这次动了哪一列。</b>
+      ${d.has_core? `<span style="margin-left:10px">当前显示 ${cols.length} 个核心指标（达标门里的）</span>
+      <button class="ghost" id="togAll" style="padding:2px 9px;margin-left:8px;font-size:13.8px">
+        ${showAll?'只看核心':'显示全部 '+d.metrics.length+' 个'}</button>`:''}
+    </div>
+
+    ${d.rows.length ? `
+    <div class="ledwrap"><table class="led"><thead><tr>
+      <th class="fix" style="min-width:0"><input type="checkbox" id="selAll" style="width:auto"></th>
+      <th class="fix">版本</th><th>prompt</th><th>产品</th><th>判定</th><th class="m">否决</th>
+      ${head}<th></th>
+    </tr></thead><tbody>${body}</tbody></table></div>
+    <div class="bar" id="bar" style="display:${S.sel.length? 'flex':'none'}">
+      <span>已选 <b id="selCount">${S.sel.length}</b> 个版本</span>
+      <span>
+        <button id="doCmp">并置对比</button>
+        <button id="clearSel">清空</button>
+      </span>
+    </div>
+    <div id="cmpOut"></div>
+
+    <h2>指标趋势<span class="c">横轴 = 版本顺序，纵轴 = 指标值</span></h2>
+    <div class="toolbar">
+      <button class="ghost" id="expCsv">导出 CSV</button>
+      <button class="ghost" id="expPng">导出趋势图 PNG</button>
+      <span style="font-size:13.8px;color:var(--ink3)">${showAll?'当前为全部指标':'默认只画核心指标'}</span>
+    </div>
+    <div id="trend"></div>
+    <div class="legend" id="legend"></div>` :
+    `<p class="empty">这个环节还没有评测记录。去「运行评测」跑一次，记得填版本标签。</p>`}`;
+
+  const tg = document.getElementById('togAll');
+  if(tg) tg.onclick = ()=>{ S.ledAll = !S.ledAll; viewLedger(); };
+  const lpr = document.getElementById('lProduct');
+  if(lpr) lpr.onchange = e=>{ S.ledProduct=e.target.value; S.ledStage=null; viewLedger(); };
+  const stEl = document.getElementById('lStage');
+  if(stEl) stEl.onchange = e=>{ S.ledStage=e.target.value; viewLedger(); };
+  const toRepo = document.getElementById('toRepo');
+  if(toRepo) toRepo.onclick = ()=> setView('settings');
+
+  const refreshBar = ()=>{
+    const bar = document.getElementById('bar');
+    const c = document.getElementById('selCount');
+    if(bar) bar.style.display = S.sel.length ? 'flex' : 'none';
+    if(c) c.textContent = S.sel.length;
+  };
+  v.querySelectorAll('input[data-sel]').forEach(cb=>{
+    cb.onchange = ()=>{
+      const id = cb.dataset.sel;
+      if(cb.checked){
+        if(S.sel.length>=4){ cb.checked=false; return alert('最多同时对比 4 个版本'); }
+        S.sel.push(id);
+      }else S.sel = S.sel.filter(x=>x!==id);
+      cb.closest('tr').classList.toggle('sel', cb.checked);
+      refreshBar();
+    };
+  });
+  const all = document.getElementById('selAll');
+  if(all) all.onchange = ()=>{
+    v.querySelectorAll('input[data-sel]').forEach(cb=>{ cb.checked = all.checked; cb.onchange(); });
+  };
+  const clr = document.getElementById('clearSel');
+  if(clr) clr.onclick = ()=>{ S.sel=[]; viewLedger(); };
+
+  const cmpBtn = document.getElementById('doCmp');
+  if(cmpBtn) cmpBtn.onclick = ()=>{
+    const rows = S.sel.map(id=>d.rows.find(r=>r.version_id===id)).filter(Boolean);
+    if(rows.length<2) return alert('至少选 2 个版本');
+    const base = rows[0];
+    const head = rows.map((r,i)=>`<th>${esc(r.label)}${i===0?' (基准)':''}<br>
+      <span style="font-weight:400;color:var(--ink3);font-size:11.4px">P:${esc(r.prompt_ver)} · 产品:${esc(r.product_ver)}</span></th>`).join('');
+    const body = d.metrics.map(m=>{
+      const cells = rows.map((r,i)=>{
+        const x = r.values[m.key];
+        if(x==null) return '<td style="color:var(--line2)">—</td>';
+        if(i===0) return `<td>${pct(x)}</td>`;
+        const b = base.values[m.key];
+        if(b==null) return `<td>${pct(x)}</td>`;
+        const df=(x-b)*100;
+        if(Math.abs(df)<0.05) return `<td class="flat">${pct(x)} <span class="delta flat">持平</span></td>`;
+        const better = m.higher_better ? df>0 : df<0;
+        return `<td class="${better?'up':'down'}">${pct(x)}
+          <span class="delta">${df>0?'▲':'▼'}${Math.abs(df).toFixed(1)}pt</span></td>`;
+      }).join('');
+      return `<tr><td>${esc(m.label)}${m.higher_better?'':' <span style="font-size:12px;color:var(--ink3)">(越低越好)</span>'}</td>${cells}</tr>`;
+    }).join('');
+    const notes = rows.map((r,i)=>i===0?'':
+      `<tr><td>相对基准的改动</td><td colspan="${rows.length-1}" style="text-align:left;font-family:var(--sans);font-size:14.4px">
+        ${esc(r.label)}：${r.changed.length? r.changed.map(c=>c==='prompt'?'改 prompt':'改产品').join(' + ') : '无版本变化'}
+        ${r.change_note? '· '+esc(r.change_note):''}</td></tr>`).join('');
+
+    document.getElementById('cmpOut').innerHTML = `
+      <h2>并置对比<span class="c">${rows.length} 个版本 · 第一列为基准</span></h2>
+      <div class="cmp"><table class="cmp"><thead><tr><th>指标</th>${head}</tr></thead>
+      <tbody>${body}${notes}</tbody></table></div>
+      <div class="note">
+        涨跌符号已按指标方向处理：「越低越好」的指标（如各类误报率）下降显示为 ▲。<br>
+        差异小于 0.05pt 显示「持平」——这个样本量下更小的差异是噪声。
+      </div>`;
+    document.getElementById('cmpOut').scrollIntoView({behavior:'smooth'});
+  };
+
+  // ── 趋势图：纯 SVG 手绘，零依赖，导出 PNG 时样式不会丢 ──
+  const COLORS = ['#9C3D0E','#1F4E79','#4A6B2A','#6B4A7A','#8A6A16','#2B5F5A'];
+  const drawTrend = ()=>{
+    const box = document.getElementById('trend');
+    const rows = d.rows;
+    const ms = cols.filter(m=>rows.some(r=>r.values[m.key]!=null));
+    if(rows.length<2 || !ms.length){
+      box.innerHTML = '<p class="empty">至少要有两次评测才能画趋势。再跑一次即可。</p>';
+      return;
+    }
+    const W=900,H=300,PL=46,PR=132,PT=16,PB=46;
+    const iw=W-PL-PR, ih=H-PT-PB, n=rows.length;
+    const X=i=> n===1? PL+iw/2 : PL+iw*i/(n-1);
+    const Y=v=> PT+ih*(1-v);
+    let g='';
+    [0,0.25,0.5,0.75,1].forEach(v=>{
+      const y=Y(v);
+      g+=`<line x1="${PL}" y1="${y.toFixed(1)}" x2="${PL+iw}" y2="${y.toFixed(1)}" stroke="#E5E3DD" stroke-width="1"/>`;
+      g+=`<text x="${PL-8}" y="${(y+3.5).toFixed(1)}" text-anchor="end" font-family="monospace" font-size="10" fill="#8B9099">${(v*100).toFixed(0)}%</text>`;
+    });
+    g+=`<line x1="${PL}" y1="${PT+ih}" x2="${PL+iw}" y2="${PT+ih}" stroke="#C8C5BC" stroke-width="1"/>`;
+    rows.forEach((r,i)=>{
+      if(n>7 && i%2===1) return;
+      g+=`<text x="${X(i).toFixed(1)}" y="${PT+ih+16}" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#474C55">${esc((r.label||'').slice(0,9))}</text>`;
+      if(r.changed && r.changed.length){
+        g+=`<text x="${X(i).toFixed(1)}" y="${PT+ih+33}" text-anchor="middle" font-family="monospace" font-size="9" fill="#9C3D0E">${r.changed.map(c=>c==='prompt'?'P':'D').join('+')}</text>`;
+      }
+    });
+    ms.forEach((m,mi)=>{
+      const c=COLORS[mi%COLORS.length];
+      const pts=rows.map((r,i)=> r.values[m.key]==null? null : [X(i),Y(r.values[m.key])]).filter(Boolean);
+      if(pts.length<2) return;
+      g+=`<path d="M${pts.map(q=>q[0].toFixed(1)+' '+q[1].toFixed(1)).join(' L')}" fill="none" stroke="${c}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>`;
+      pts.forEach(q=>{ g+=`<circle cx="${q[0].toFixed(1)}" cy="${q[1].toFixed(1)}" r="2.6" fill="#FFFFFF" stroke="${c}" stroke-width="1.8"/>`; });
+      const ly=PT+9+mi*17;
+      g+=`<line x1="${PL+iw+14}" y1="${ly}" x2="${PL+iw+28}" y2="${ly}" stroke="${c}" stroke-width="1.8"/>`;
+      g+=`<text x="${PL+iw+33}" y="${ly+3.5}" font-family="sans-serif" font-size="10.5" fill="#474C55">${esc(m.label)}</text>`;
+    });
+    box.innerHTML = `<svg id="trendSvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}"
+      width="100%" style="max-width:${W}px;display:block">
+      <rect x="0" y="0" width="${W}" height="${H}" fill="#FDFBF5"/>${g}
+    </svg>`;
+    document.getElementById('legend').innerHTML =
+      `<span class="hint">横轴＝每一次评测 · P＝只改 prompt · D＝只改产品 · 只画核心指标（全量看上面的表）</span>`;
+  };
+  drawTrend();
+
+  // ── 导出 CSV（带 BOM，Excel 打开中文不乱码）──
+  const expCsv = ()=>{
+    const head = ['版本','prompt版本','产品版本','prompt备注','产品备注','判定','否决数','时间',
+                  ...cols.map(m=>m.label)];
+    const lines = [head];
+    d.rows.forEach(r=>lines.push([
+      r.label, r.prompt_ver, r.product_ver, r.prompt_note, r.product_note,
+      r.verdict, r.n_fatal, r.created_at,
+      ...cols.map(m=> r.values[m.key]==null? '' : (r.values[m.key]*100).toFixed(1)+'%')
+    ]));
+    const csv = '\ufeff' + lines.map(l=>l.map(x=>'"'+String(x==null?'':x).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+    a.download = `ledger-${cur}-${st}.csv`;
+    a.click();
+  };
+
+  // ── 导出趋势图 PNG（SVG → canvas）──
+  const expPng = ()=>{
+    const svg = document.getElementById('trendSvg');
+    if(!svg) return alert('还没有趋势图，至少要有两次评测');
+    const SCALE = 2;
+    const clone = svg.cloneNode(true);
+    clone.setAttribute('xmlns','http://www.w3.org/2000/svg');
+    clone.setAttribute('width', 900);
+    clone.setAttribute('height', 300);
+    const data = new XMLSerializer().serializeToString(clone);
+    const img = new Image();
+    img.onload = ()=>{
+      const cv = document.createElement('canvas');
+      cv.width = 900*SCALE; cv.height = 300*SCALE;
+      const cx = cv.getContext('2d');
+      cx.fillStyle = '#FFFFFF'; cx.fillRect(0,0,cv.width,cv.height);
+      cx.drawImage(img, 0, 0, cv.width, cv.height);
+      cv.toBlob(b=>{
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(b);
+        a.download = `trend-${cur}-${st}.png`;
+        a.click();
+      }, 'image/png');
+    };
+    img.onerror = ()=> alert('导出失败，可以改用 CSV');
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(data);
+  };
+
+  const ec = document.getElementById('expCsv'); if(ec) ec.onclick = expCsv;
+  const ep = document.getElementById('expPng'); if(ep) ep.onclick = expPng;
+}
+
+/* ─────────── 评测版本 ─────────── */
+async function viewVersions(){
+  const v = document.getElementById('view');
+  const list = await api('/api/versions');
+  // 版本表只存了 run_id，模型/数据集在运行记录里；补一层映射，
+  // 方便对比 prompt 时确认「两次是不是同一个模型、同一套题」。
+  let runMap = {};
+  try { (await api('/api/runs')).forEach(r => { runMap[r.id] = r; }); } catch(e) {}
+  const dsOf = x => x.dataset_id ? String(x.dataset_id).slice(0, 8) : '—';
+  const mdOf = x => (runMap[x.run_id] && runMap[x.run_id].model) || '—';
+  const opt = x=>`<option value="${x.id}">${esc(x.label)} · prompt:${esc(x.prompt_ver||'-')} · 产品:${esc(x.product_ver||'-')} · ${esc(x.verdict)}</option>`;
+  v.innerHTML = `
+    <h2>评测版本<span class="c">${list.length}</span></h2>
+    <div class="note">
+      每跑一次就自动记一个版本。<b>要判断改动有没有用，就在这里选两个版本比</b>——
+      平台会先看你改的是 prompt 还是产品，只改一个才给归因；两个都改会明确拒绝归因。
+    </div>
+    <table><thead><tr><th>版本</th><th>prompt</th><th>产品</th><th>数据集</th><th>模型</th><th>改动说明</th><th class="r">判定</th><th class="r">时间</th><th>运行与报告</th></tr></thead>
+    <tbody>${list.map(x=>`<tr>
+      <td class="num">${esc(x.label)}</td>
+      <td style="color:var(--ink3)">${esc(x.prompt_ver||'默认')}</td>
+      <td style="color:var(--ink3)">${esc(x.product_ver||'—')}</td>
+      <td style="color:var(--ink3)" class="num">${esc(dsOf(x))}</td>
+      <td style="color:var(--ink3)" class="num">${esc(mdOf(x))}</td>
+      <td>${esc(x.change_note||'')}</td>
+      <td class="r"><span class="stamp ${x.verdict==='合格'?'pass':''}">${esc(x.verdict)}</span></td>
+      <td class="r num" style="color:var(--ink3)">${esc(x.created_at)}</td><td>${x.run_id ? `<button class="ghost mini" data-version-run="${esc(x.run_id)}">查看运行</button> <a href="/api/runs/${encodeURIComponent(x.run_id)}/report" target="_blank" rel="noopener">报告</a>` : '无关联运行'}</td></tr>`).join('')
+      || '<tr><td colspan="9" class="empty">还没有版本。先跑一次评测，记得填「版本记录」。</td></tr>'}</tbody></table>
+    <h2>对比两个版本</h2>
+    <div class="row">
+      <div><label>A（旧）</label><select id="va">${list.map(opt).join('')}</select></div>
+      <div><label>B（新）</label><select id="vb">${list.map(opt).join('')}</select></div>
+    </div>
+    <div style="margin-top:14px"><button class="act" id="vGo">生成对照报告</button></div>
+    <div id="vMsg"></div>
+    <div id="vOut"></div>`;
+  v.querySelectorAll('[data-version-run]').forEach(b=>b.onclick=()=>showRunDetail(b.dataset.versionRun));
+  document.getElementById('vGo').onclick = async ()=>{
+    const a = document.getElementById('va').value, b = document.getElementById('vb').value;
+    if(a===b) return alert('请选两个不同版本');
+    document.getElementById('vMsg').innerHTML = '<p class="empty">生成中…</p>';
+    try{
+      const d = await api(`/api/version-compare?a=${a}&b=${b}`);
+      document.getElementById('vMsg').innerHTML = `<div class="warn" style="border-left-color:var(--ok)">
+        A <b>${esc(d.verdict_a)}</b> → B <b>${esc(d.verdict_b)}</b>　
+        <a href="${d.url}" target="_blank">新窗口打开</a></div>`;
+      document.getElementById('vOut').innerHTML =
+        `<h2>对照报告<span class="c">按「变了什么」决定能不能归因</span></h2><iframe src="${d.url}"></iframe>`;
+    }catch(e){ document.getElementById('vMsg').innerHTML = `<div class="warn">${esc(e.message)}</div>`; }
+  };
+}
+
+async function showRunDetail(id){
+  const box=document.getElementById('runDetail') || document.getElementById('vOut');
+  box.innerHTML='<p class="empty">正在读取运行…</p>';
+  try { const d=await api('/api/runs/'+encodeURIComponent(id)); box.innerHTML=`<h2>运行详情</h2><pre>${esc(JSON.stringify(d,null,2))}</pre><a href="/api/runs/${encodeURIComponent(id)}/report" target="_blank" rel="noopener">打开报告</a>`; }
+  catch(e){box.innerHTML=`<div class="warn">${esc(e.message)}</div>`;}
+}
+async function viewRuns(){
+  const v=document.getElementById('view'); v.innerHTML='<p class="empty">正在读取运行记录…</p>';
+  try { const runs=await api('/api/runs'); if(S.view!=='runs') return;
+    v.innerHTML=`<h2>运行记录与报告<span class="c">${runs.length}</span></h2><table><thead><tr><th>运行</th><th>时间</th><th>环节</th><th>操作</th></tr></thead><tbody>${runs.map(r=>`<tr><td>${esc(r.id)}</td><td>${esc(r.started_at)}</td><td>${esc(r.stage)}</td><td><button class="ghost mini" data-run-detail="${esc(r.id)}">查看运行</button> <a href="/api/runs/${encodeURIComponent(r.id)}/report" target="_blank" rel="noopener">查看报告</a></td></tr>`).join('') || '<tr><td colspan="4">暂无运行记录</td></tr>'}</tbody></table><div id="runDetail"></div>`;
+    v.querySelectorAll('[data-run-detail]').forEach(b=>b.onclick=()=>showRunDetail(b.dataset.runDetail));
+  } catch(e){v.innerHTML=`<div class="warn">${esc(e.message)}</div>`;}
+}
+
+/* ─────────── A/B ─────────── */
+async function viewCompare(){
+  const v = document.getElementById('view');
+  S.runs = await api('/api/runs');
+  const opt = r=>`<option value="${r.id}">${esc(r.started_at)} · ${esc(r.stage)} · ${r.n_cases}条 · ${esc(r.model)}</option>`;
+  v.innerHTML = `
+    <h2>选择两次运行</h2>
+    <div class="row">
+      <div><label>A（基准）</label><select id="ca">${S.runs.map(opt).join('')}</select></div>
+      <div><label>B（对照）</label><select id="cb">${S.runs.map(opt).join('')}</select></div>
+    </div>
+    <div class="note">
+      归因规则：<b>一次只改一个变量</b>。要判断某个 prompt 版本好不好，A/B 必须同模型、同数据集、同一批用例，只有 prompt 不同。<br>
+      差异小于 5 个百分点的，一律视为「同档」，不要当成改进。
+    </div>
+    <button class="act" id="cGo">对比</button>
+    <div id="cOut"></div>`;
+  document.getElementById('cGo').onclick = async ()=>{
+    const a = document.getElementById('ca').value, b = document.getElementById('cb').value;
+    if(a===b) return alert('请选择两次不同的运行');
+    const d = await api(`/api/compare?a=${a}&b=${b}`);
+    document.getElementById('cOut').innerHTML = `
+      ${d.warnings.map(w=>`<div class="warn">${esc(w)}</div>`).join('')}
+      <h2>指标差异<span class="c">共同用例 ${d.n_common}</span></h2>
+      <table><thead><tr><th>指标</th><th class="r">A</th><th class="r">B</th><th class="r">差值</th><th class="r">判断</th></tr></thead>
+      <tbody>${d.metrics.map(m=>{
+        const big = Math.abs(m.delta) > 0.05;
+        const cls = !big ? '' : (m.delta>0?'ok':'bad');
+        return `<tr><td class="num">${esc(m.metric)}</td>
+          <td class="r num">${pct(m.a)}</td><td class="r num">${pct(m.b)}</td>
+          <td class="r num ${cls}">${m.delta>0?'+':''}${(m.delta*100).toFixed(1)}pt</td>
+          <td class="r" style="color:var(--ink3)">${big?(m.delta>0?'B 更好':'A 更好'):'同档'}</td></tr>`;
+      }).join('')}</tbody></table>
+      <h2>判定发生变化的用例<span class="c">${d.diffs.length}</span></h2>
+      ${d.diffs.length ? `<table><thead><tr><th>用例</th><th>分层</th><th>A</th><th>B</th><th>说明</th></tr></thead>
+      <tbody>${d.diffs.map(x=>`<tr><td class="num">${esc(x.case_id)}</td>
+        <td style="color:var(--ink3)">${esc(x.stratum)}</td>
+        <td class="num ${x.a==='pass'?'ok':'bad'}">${esc(x.a)}</td>
+        <td class="num ${x.b==='pass'?'ok':'bad'}">${esc(x.b)}</td>
+        <td style="color:var(--ink2)">${esc(x.b_note||x.a_note||'')}</td></tr>`).join('')}</tbody></table>`
+      : '<p class="empty">两次运行的判定完全一致，没有任何用例翻转。</p>'}`;
+  };
+}
+
+/* ─────────── 设置 ─────────── */
+function graderCategory(g){ const t=(g.key+' '+(g.label||'')+' '+(g.desc||'')).toLowerCase(); return /tool|trajectory|agent|工具|轨迹/.test(t)?'工具与轨迹':/safety|safe|rule|安全|规则/.test(t)?'安全与规则':/text|extract|answer|quality|文本|内容|提取/.test(t)?'文本与内容':'其他'; }
+async function viewAdapter(){
+  const v = document.getElementById('view');
+  const graders = await api('/api/graders');
+  S.products = await api('/api/products');
+  const gOpts = graders.map(g=>`<option value="${g.key}">${esc(g.label)} · ${esc(g.key)}</option>`).join('');
+  v.innerHTML = `
+    <div class="note">
+      接入一个新产品的三步：<b>写评测计划</b>（说清测哪几个环节、每环节怎么算达标）→
+      <b>导入</b>（自动识别环节）→ <b>造题</b>。判分逻辑不在计划里，
+      只能从下面的评分器目录里选——那是这套评测的价值观，不能由 AI 现编。
+    </div>
+
+    <h2>第一步：评测计划<span class="c">JSON，或让 AI 从 markdown 里抽</span></h2>
+    <div class="row" style="grid-template-columns:1fr">
+      <div>
+        <label>评测计划（JSON）</label>
+        <textarea id="planBox" style="min-height:340px;resize:vertical" placeholder='{"product":"resume","name":"AI 简历优化","stages":[{"id":"parse","name":"① 解析","grader":"extract_quality","prompt":"从简历里抽字段…{input}","gates":[{"key":"field_accuracy","op":">=","value":0.85,"label":"字段准确率"}],"fatal":["F1"]}]}'></textarea>
+        <div style="display:flex;gap:16px;margin-top:12px;align-items:center">
+          <button class="ghost" id="planTpl">填入模板</button>
+          <button class="ghost" id="planCheck">先看解析结果</button>
+          <span style="flex:1"></span>
+          <button class="act" id="planImport">确认导入</button>
+        </div>
+      </div>
+    </div>
+    <h2>评分器目录<span class="c">按用途浏览，展开查看详情并写入计划的首个环节</span></h2>
+    ${['文本与内容','工具与轨迹','安全与规则','其他'].map(category=>`<h3>${category}</h3><div class="grader-grid">${graders.filter(g=>graderCategory(g)===category).map(g=>`<details class="grader-card"><summary>${esc(g.label||g.key)}</summary><div><code>${esc(g.key)}</code></div><p>${esc(g.desc||'暂无说明')}</p><div>指标：${(g.metrics||[]).map(m=>esc(Array.isArray(m)?m[0]:m)).join(' · ')||'暂无'}</div><button type="button" class="ghost mini" data-plan-grader="${esc(g.key)}">用于计划首个环节</button></details>`).join('') || '<span class="note">暂无</span>'}</div>`).join('')}
+    <div id="planOut"></div>
+
+    <h2>第二步：造题<span class="c">AI 按评分器给的标准答案格式生成 · 导入完成后才能用</span></h2>
+    <div class="row">
+      <div><label>产品</label><select id="gProduct">${S.products.map(p=>`<option value="${p.product}">${esc(p.name)}</option>`).join('')}</select></div>
+      <div><label>环节</label><select id="gStage"></select></div>
+    </div>
+    <div class="row">
+      <div><label>生成条数</label><input id="gN" type="number" value="20"></div>
+      <div><label>额外要求（可选）</label><input id="gTip" placeholder="至少一半是刁钻情况"></div>
+    </div>
+    <label>贴一条真实输入（AI 照这个结构生成）</label>
+    <textarea id="gExample" style="min-height:110px" placeholder='{"question":"示例问题"}'></textarea>
+    <div style="display:flex;gap:10px;margin-top:10px">
+      <button class="act" id="gGo">生成</button>
+      <span style="font-size:14.4px;color:var(--ink3);align-self:center">需要配 API Key。生成后一定要跑「体检」——参考答案不全过，这套题就是废的。</span>
+    </div>
+    <div id="gOut"></div>
+
+    <h2>已接入<span class="c">${S.products.length}</span></h2>
+    <table><thead><tr><th>产品</th><th>环节</th><th class="r">来源</th></tr></thead>
+    <tbody>${S.products.map(p=>`<tr><td>${esc(p.name)}<div style="font-size:13.2px;color:var(--ink3)">${esc(p.product)}</div></td>
+      <td>${(p.stages||[]).map(x=>`<span class="badge" style="display:inline-block;margin:0 6px 4px 0">${esc(x.name||x.id)}</span>`).join('')}</td>
+      <td class="r" style="font-size:13.8px;color:var(--ink3)">${esc(srcLabel(p.source))}</td></tr>`).join('')}</tbody></table>`;
+
+  v.querySelectorAll('[data-plan-grader]').forEach(b=>b.onclick=()=>{ try { const box=document.getElementById('planBox'); const plan=JSON.parse(box.value); if(!Array.isArray(plan.stages)||!plan.stages.length) throw new Error('请先在计划中填写至少一个环节'); plan.stages[0].grader=b.dataset.planGrader; box.value=JSON.stringify(plan,null,2); } catch(e){alert('无法写入评分器：'+e.message);} });
+  // 模板
+  document.getElementById('planTpl').onclick = () => {
+    document.getElementById('planBox').value = JSON.stringify({
+      product: "resume", name: "AI 简历优化", note: "给求职者改简历",
+      stages: [{
+        id: "parse", name: "① 简历解析", task_type: "extract", grader: "extract_quality",
+        prompt: "从下面这份简历里抽出结构化字段（姓名/学历/年限/最近职位/技能）。抽不到的留空，不要编。\n\n{input}",
+        gates: [{key:"field_accuracy",op:">=",value:0.85,label:"字段准确率"},
+                {key:"uncertain_ok",op:">=",value:0.8,label:"不确定标注率"}],
+        fatal: ["F1"]
+      }]
+    }, null, 1);
+  };
+
+  const parsePlan = () => { try { return JSON.parse(document.getElementById('planBox').value); }
+    catch(e){ throw new Error('JSON 解析失败：'+e.message); } };
+
+  const showPlan = d => {
+    const w = d.warnings || [];
+    document.getElementById('planOut').innerHTML = `
+      <h2 style="margin-top:16px">识别出 ${d.stages.length} 个环节<span class="c">${esc(d.name)} · ${esc(d.product)}</span></h2>
+      <div class="cmp"><table class="cmp">
+        <thead><tr><th>环节</th><th>评分器</th><th class="r">达标门</th><th class="r">否决</th></tr></thead>
+        <tbody>${d.stages.map(s=>`<tr>
+          <td>${esc(s.name)}<div style="font-size:13.2px;color:var(--ink3)">${esc(s.id)}</div></td>
+          <td style="text-align:left;font-family:var(--sans);font-size:14.4px">${esc(s.grader)}</td>
+          <td class="r">${s.n_gates}</td><td class="r">${s.n_fatal}</td></tr>`).join('')}</tbody></table></div>
+      ${w.length?`<div class="warn"><b>有 ${w.length} 处需要你确认</b><br>${w.map(esc).join('<br>')}</div>`
+        :'<div class="note" style="background:rgba(59,122,75,.08)">结构没问题。</div>'}`;
+  };
+
+  document.getElementById('planCheck').onclick = async () => {
+    let plan; try{ plan = parsePlan(); }catch(e){ return alert(e.message); }
+    try{
+      const d = await api('/api/products/import', {method:'POST',
+        headers:{'Content-Type':'application/json'}, body: JSON.stringify({plan, dry_run:true})});
+      showPlan(d);
+    }catch(e){ alert(e.message); }
+  };
+
+  document.getElementById('planImport').onclick = async () => {
+    let plan; try{ plan = parsePlan(); }catch(e){ return alert(e.message); }
+    try{
+      const d = await api('/api/products/import', {method:'POST',
+        headers:{'Content-Type':'application/json'}, body: JSON.stringify({plan})});
+      showPlan(d);
+      alert(`已接入「${d.name}」，共 ${d.stages.length} 个环节。去「运行评测」给它跑第一轮吧。`);
+      viewAdapter();
+    }catch(e){ alert(e.message); }
+  };
+
+  // 造题
+  const fillG = () => {
+    const p = S.products.find(x=>x.product===document.getElementById('gProduct').value);
+    document.getElementById('gStage').innerHTML = (p?.stages||[]).map(s=>
+      `<option value="${s.id}">${esc(s.name||s.id)}</option>`).join('');
+  };
+  document.getElementById('gProduct').onchange = fillG; fillG();
+
+  document.getElementById('gGo').onclick = async () => {
+    const out = document.getElementById('gOut');
+    let ex = null;
+    const raw = document.getElementById('gExample').value.trim();
+    if(raw){ try{ ex = JSON.parse(raw); }catch(e){ return alert('示例输入不是合法 JSON'); } }
+    out.innerHTML = '<p class="empty">正在生成，20 条大约 30–60 秒…</p>';
+    try{
+      const d = await api('/api/datasets/generate', {method:'POST',
+        headers:{'Content-Type':'application/json'}, body: JSON.stringify({
+          ...modelCfg(), model_api_keys:roleKeys(),
+          product: document.getElementById('gProduct').value,
+          stage: document.getElementById('gStage').value,
+          n_cases: parseInt(document.getElementById('gN').value)||20,
+          instruction: document.getElementById('gTip').value,
+          input_example: ex})});
+      out.innerHTML = `<div class="note">
+        生成 ${d.n_cases} 条，分层：${Object.entries(d.strata).map(([k,n])=>`${esc(k)} ${n}`).join(' · ')}
+        ${d.n_problems?`<br><b class="bad">自检发现 ${d.n_problems} 处问题</b>：${d.problems.slice(0,6).map(esc).join('；')}`
+        :'<br>自检没发现结构问题。'}</div>
+        <div class="note">这套题已经存成评测集了。下一步去「评测集」页点<b>体检</b>——
+        参考答案必须全过、白卷基线要低，缺一条都不能用。</div>
+        <pre>${esc(JSON.stringify(d.preview, null, 1).slice(0, 1200))}</pre>`;
+    }catch(e){ out.innerHTML = `<div class="warn">${esc(e.message)}</div>`; }
+  };
+}
+
+async function viewSettings(){
+  const v = document.getElementById('view');
+  const c = loadCfg();
+  let st = {};
+  try { st = await api('/api/settings'); } catch(e) {}
+  v.innerHTML = `
+    <h2>浏览器本地 API 配置</h2>
+    <div class="warn"><b>安全提示：</b>localStorage 明文保存，非安全密钥库；同源脚本、恶意扩展、可访问此浏览器的人及 XSS 攻击均可能读取。不要在共享或不可信设备上保存密钥。运行、探测或生成时密钥随请求发送给本服务，由服务访问目标；网络、服务端日志及后续处理也可能造成泄露，请使用可信 HTTPS 服务。清除浏览器数据会丢失配置。</div>
+    <div class="row"><div><label>模型 API 地址（base_url）</label><input id="sModelUrl" value="${esc(c.model_url||'')}" placeholder="https://api.example.com/v1"></div>
+      <div><label>模型</label><input id="sModel" value="${esc(c.model||'')}" placeholder="未配置"></div></div>
+    <label>模型 API Key</label><input id="sk" type="password" autocomplete="off" value="${esc(c.model_key||'')}">
+    <h2>产品接口配置</h2>
+    <div class="row"><div><label>接口地址</label><input id="sProductUrl" value="${esc(c.product_url||'')}"></div><div><label>方法</label><select id="sMethod"><option>POST</option><option>GET</option></select></div></div>
+    <div class="row"><div><label>响应字段路径</label><input id="sPath" value="${esc(c.product_path||'')}"></div><div><label>超时（秒）</label><input id="sTimeout" type="number" value="${esc(c.product_timeout||30)}"></div></div>
+    <label>产品接口 API Key</label><input id="sProductKey" type="password" autocomplete="off" value="${esc(c.product_key||'')}">
+    <label>请求体模板（JSON，可留空）</label><textarea id="sBody">${esc(c.product_body_text||'')}</textarea>
+    <div style="margin-top:14px;display:flex;gap:10px"><button class="act" id="skSave">保存到浏览器</button><button class="ghost" id="skClear">清除本地配置</button></div><div id="skMsg"></div>
+    <h2>被测产品仓库<span class="c">服务端设置 · 台账里的「产品」列据此自动读版本号</span></h2>
+    <label>被测产品仓库路径（本地 git 仓库根目录）</label>
+    <input id="sRepo" value="${esc(st.product_repo||'')}" placeholder="/path/to/your/product/repo">
+    <div class="note">只在服务端本机读取：台账页会用这个路径跑 <code>git rev-parse</code> 取当前提交号，填了它「版本记录 → 产品侧」的版本号就可以留空自动填。留空 = 不自动读取，台账改为显示手动填的版本号。</div>
+    <div style="margin-top:12px"><button class="act" id="sRepoSave">保存到服务端</button></div>
+    <div id="sRepoMsg"></div>
+    <h2>服务端数据位置</h2><table><tbody>
+      <tr><td>数据库</td><td class="num">${esc(st.db_path||'未知')}</td></tr>
+      <tr><td>评测集上传目录</td><td class="num">${esc(st.uploads||'未知')}</td></tr>
+      <tr><td>报表目录</td><td class="num">./reports/</td></tr></tbody></table>`;
+  document.getElementById('sMethod').value = c.product_method || 'POST';
+  document.getElementById('skSave').onclick = ()=>{
+    const val = id => document.getElementById(id).value.trim();
+    const text = val('sBody'); let body = null;
+    try { if(text) body = JSON.parse(text); } catch(e){ return document.getElementById('skMsg').textContent = '请求体模板不是合法 JSON：' + e.message; }
+    try {
+      saveCfg({model_url:val('sModelUrl'), model:val('sModel'), model_key:val('sk'), product_url:val('sProductUrl'), product_method:val('sMethod'), product_path:val('sPath'), product_timeout:Number(val('sTimeout'))||30, product_key:val('sProductKey'), product_body_text:text, product_body:body});
+      document.getElementById('skMsg').textContent = '已保存到当前浏览器。'; refreshStat();
+    } catch(e){ document.getElementById('skMsg').textContent = '保存失败：' + e.message; }
+  };
+  const repoBtn = document.getElementById('sRepoSave');
+  if(repoBtn) repoBtn.onclick = async ()=>{
+    const msg = document.getElementById('sRepoMsg');
+    const value = document.getElementById('sRepo').value.trim();
+    msg.textContent = '正在保存…';
+    try{
+      await api('/api/settings', {method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({product_repo: value})});
+      const back = await api('/api/settings');
+      document.getElementById('sRepo').value = back.product_repo || '';
+      msg.textContent = back.product_repo
+        ? `已保存：${back.product_repo}（台账页会据此读取产品版本号）`
+        : '已清空：台账页不再自动读取产品版本号。';
+    }catch(e){ msg.textContent = '保存失败：' + e.message; }
+  };
+  document.getElementById('skClear').onclick = ()=>{
+    try { localStorage.removeItem(CFG_KEY); viewSettings(); refreshStat(); } catch(e){ document.getElementById('skMsg').textContent = '清除失败：' + e.message; }
+  };
+}
+
+async function refreshStat(){
+  const ready = !!modelCfg().api_key;
+  document.getElementById('stat').innerHTML = `<i style="background:${ready?'var(--ok)':'var(--bad)'}"></i>` +
+    (ready?'模型 Key 已配置':'模型 Key 未配置') + '<br><span style="opacity:.7">配置存于当前浏览器</span>';
+}
+
+(async ()=>{
+  S.products = await api('/api/products');
+  await refreshStat();
+  const [h, arg] = location.hash.replace('#','').split('/');
+  if(h === 'run' && arg) S.cur = decodeURIComponent(arg);   // #run/<id> 可直接深链到某次运行
+  setView(['overview','ledger','datasets','prompts','run','versions','adapter','models','settings','modelRun','agentRun','uiRun'].includes(h) ? h : 'overview');
+})();
+</script>
+</body></html>
